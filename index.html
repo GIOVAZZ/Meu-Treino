@@ -52,7 +52,7 @@ body::before{
   position:sticky;top:0;z-index:200;
   background:rgba(8,9,12,0.90);
   backdrop-filter:blur(20px) saturate(150%);
-  border-bottom:1px solid var(--w08,rgba(255,255,255,0.08));
+  border-bottom:1px solid var(--w8);
   display:flex;align-items:stretch;
   height:52px;padding:0 16px;
   overflow-x:auto;scrollbar-width:none;
@@ -858,7 +858,7 @@ body::before{
   <div class="score-block a1">
     <div class="ring-wrap">
       <svg width="90" height="90" viewBox="0 0 90 90">
-        <circle class="ring-bg" cx="45" cy="45" r="45" style="r:40px"/>
+        <circle class="ring-bg" cx="45" cy="45" r="40"/>
         <circle class="ring-bg" cx="45" cy="45" r="40"/>
         <circle class="ring-fg" id="ring" cx="45" cy="45" r="40"/>
         <text class="ring-num" x="45" y="48" text-anchor="middle" dominant-baseline="middle" id="ring-num">0</text>
@@ -1095,11 +1095,14 @@ const PLAN=[
 
 function renderRunPlan(){
   const el=$('run-plan');if(!el)return;
+  const openPhases=new Set();
+  document.querySelectorAll('.rp-phase.open').forEach(el=>openPhases.add(el.id.replace('ph-','')));
+  const isFirstRender=!document.querySelector('.rp-phase');
   el.innerHTML=PLAN.map(ph=>{
     const total=ph.sessions.length;
     const done=ph.sessions.filter(s=>PL[s.id]).length;
     const pct=total?Math.round(done/total*100):0;
-    const isOpen=ph.id===PLAN[0].id; // first phase open by default
+    const isOpen=isFirstRender?(ph.id===PLAN[0].id):openPhases.has(ph.id);
     const html=`
       <div class="rp-phase ${isOpen?'open':''}" id="ph-${ph.id}">
         <div class="rp-phase-head" onclick="togPhase('${ph.id}')">
@@ -1181,4 +1184,100 @@ const WEEK_DATA=[
     {l:'Noite — Corrida Progressiva',tip:'10 min leve → 10 min moderado → 5 min leve. Aqui você calibra o ritmo.'},
   ]},
   {nm:'SEXTA',n:'05',ch:[{l:'POSTERIOR',s:'chip-muted'},{l:'GLÚTEO',s:'chip-muted'}],sess:[
-    {l:'Posterior & Glúteo',ex:[['Hip thrust','4 × 8'],['Stiff (RDL)','4 × 10'],['Mesa flexora','3 × 15'],['Afundo','3 × 10 cada'],['Abdução máquina','3 × 15'],['Panturrilha sentado','5 × 20']]}
+    {l:'Posterior & Glúteo',ex:[['Hip thrust','4 × 8'],['Stiff (RDL)','4 × 10'],['Mesa flexora','3 × 15'],['Afundo','3 × 10 cada'],['Abdução máquina','3 × 15'],['Panturrilha sentado','5 × 20']]},
+    {l:'Noite',tip:'15 min caminhada suave. Sem corrida — preserve energia para o domingo.'},
+  ]},
+  {nm:'SÁBADO',n:'06',ch:[{l:'RECUPERAÇÃO',s:'chip-ok'}],sess:[
+    {l:'Recuperação & Mobilidade',tip:'40 min caminhada leve · mobilidade completa (30 min) · foam roller · hidratação alta. Este é o segredo do longão bom.'},
+  ]},
+  {nm:'DOMINGO',n:'07',ch:[{l:'LONGÃO',s:'chip-acc'}],sess:[
+    {l:'LONGÃO — O treino mais importante da semana',tip:'Zona 2 pura — se não consegue conversar, está rápido demais. Vá devagar e vá longe. S1–4: 5–7 km · S5–8: 7–9 km · S9–12: 9–11 km · S13+: 12–15 km. Hidrate a cada 30 min.'},
+  ]},
+];
+function renderWeek(){
+  const el=$('day-stack');if(!el)return;
+  el.innerHTML=WEEK_DATA.map((d,i)=>{
+    const chips=d.ch.map(c=>`<span class="chip ${c.s}">${c.l}</span>`).join('');
+    const body=d.sess.map(s=>{
+      let h=`<div class="sess-head">${s.l}</div>`;
+      if(s.ex)h+=`<ul class="ex-list">${s.ex.map((e,j)=>`<li class="ex-row"><span class="ex-n">${String(j+1).padStart(2,'0')}</span><span class="ex-name">${e[0]}</span><span class="ex-sets">${e[1]}</span></li>`).join('')}</ul>`;
+      if(s.tip)h+=`<div class="day-tip">${s.tip}</div>`;
+      return h+'<div style="height:10px"></div>';
+    }).join('');
+    return`<div class="day-card" id="dc${i}">
+      <button class="day-btn" onclick="togDay(${i})">
+        <span class="day-idx">${d.n}</span>
+        <span class="day-name">${d.nm}</span>
+        <div class="day-chips">${chips}</div>
+        <svg class="day-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="day-body" id="db${i}">${body}</div>
+    </div>`;
+  }).join('');
+}
+function togDay(i){const dc=$('dc'+i),db=$('db'+i);const o=dc.classList.toggle('open');db.classList.toggle('open',o);}
+
+/* ── HABITS ── */
+const HABS=[{id:'w3',l:'Água 3L'},{id:'w4',l:'Água 4L'},{id:'oat',l:'Aveia'},
+  {id:'fruit',l:'Fruta'},{id:'veg',l:'Verduras'},{id:'bean',l:'Feijão'},
+  {id:'prot',l:'Proteína meta'},{id:'gym',l:'Treino feito'},
+  {id:'run',l:'Corrida'},{id:'steps',l:'10k passos'},{id:'sleep',l:'Sono 8h'}];
+function gH(){return HL[td()]||{};}
+function renderHabits(){
+  const ch=gH(),el=$('hab-grid');if(!el)return;
+  el.innerHTML=HABS.map(h=>{const on=!!ch[h.id];
+    return`<div class="hab-item ${on?'on':''}" onclick="togH('${h.id}')">
+      <div class="hab-box">${on?'✓':''}</div>
+      <div class="hab-txt">${h.l}</div>
+    </div>`;}).join('');
+  const cnt=Object.values(ch).filter(Boolean).length;
+  const pct=(cnt/11*100).toFixed(0);
+  const ring=$('ring');
+  if(ring){
+    const offset=282-(282*(cnt/11));
+    ring.style.strokeDashoffset=offset;
+    ring.style.stroke=cnt>=9?'var(--ok)':cnt>=5?'var(--acc)':'var(--warn)';
+  }
+  txt('ring-num',cnt);txt('ring-den','/11');txt('score-pct',pct+'%');txt('score-lbl',cnt+' de 11 hábitos');
+}
+function togH(id){if(!HL[td()])HL[td()]={};HL[td()][id]=!HL[td()][id];S.set('ah5_h',HL);renderHabits();drawCharts();}
+
+/* ── CHARTS ── */
+const CH={};
+const CB={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},
+    tooltip:{backgroundColor:'#141519',titleColor:'#f2f3f7',bodyColor:'#9899a6',
+      borderColor:'rgba(255,255,255,0.08)',borderWidth:1,padding:10,cornerRadius:6,
+      titleFont:{family:'JetBrains Mono',size:9},bodyFont:{family:'JetBrains Mono',size:9}}},
+  scales:{
+    x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#44454f',font:{family:'JetBrains Mono',size:9}}},
+    y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#44454f',font:{family:'JetBrains Mono',size:9}}},
+  }
+};
+function mkC(id,cfg){const c=$(id);if(!c)return;if(CH[id])CH[id].destroy();CH[id]=new Chart(c,cfg);}
+function drawCharts(){
+  const wL=WL.map(w=>fmtD(w.date)),wD=WL.map(w=>w.val);
+  const wCfg={type:'line',data:{labels:wL.length?wL:['Hoje'],datasets:[
+    {label:'Peso',data:wD.length?wD:[100],borderColor:'#E8FF47',backgroundColor:'rgba(232,255,71,0.06)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#E8FF47',tension:0.4,fill:true},
+    {label:'Meta 80kg',data:(wD.length?wD:[100]).map(()=>80),borderColor:'rgba(82,201,122,0.4)',borderDash:[5,4],borderWidth:1,pointRadius:0},
+  ]},options:{...CB,plugins:{...CB.plugins,legend:{display:true,labels:{color:'#44454f',font:{family:'JetBrains Mono',size:9}}}}}};
+  mkC('c-dash-w',JSON.parse(JSON.stringify(wCfg)));
+  mkC('c-saude-w',JSON.parse(JSON.stringify(wCfg)));
+  const rL=RL.map(r=>fmtD(r.date)),rD=RL.map(r=>r.km);
+  mkC('c-run',{type:'bar',data:{labels:rL.length?rL:['—'],datasets:[{data:rD.length?rD:[0],backgroundColor:'rgba(232,255,71,0.12)',borderColor:'rgba(232,255,71,0.5)',borderWidth:1,borderRadius:4}]},options:CB});
+  const hL=[],hD=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);
+    hL.push(fmtD(k));hD.push(Object.values(HL[k]||{}).filter(Boolean).length);}
+  mkC('c-hab',{type:'bar',data:{labels:hL,datasets:[{data:hD,backgroundColor:'rgba(232,255,71,0.12)',borderColor:'rgba(232,255,71,0.5)',borderWidth:1,borderRadius:4}]},options:{...CB,scales:{...CB.scales,y:{...CB.scales.y,min:0,max:11}}}});
+}
+
+/* ── INIT ── */
+(function(){
+  const t=td();['w-date','r-date'].forEach(id=>{const e=$(id);if(e)e.value=t;});
+  renderWList();updDash();renderRun();renderRunPlan();renderWeek();renderHabits();
+  setTimeout(drawCharts,120);
+})();
+</script>
+</body>
+</html>
