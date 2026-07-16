@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Athlete OS — 90 Dias</title>
+<meta name="theme-color" content="#060710">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Athlete OS">
+<meta name="description" content="Protocolo de 90 dias — treino, corrida, ciclismo e nutrição.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -450,6 +456,15 @@ input,select{font-family:var(--fb)}
 
   <div class="card cr a5" style="font-size:12.5px;line-height:1.75;color:var(--t2)">⚠ <strong style="color:var(--t)">LDL 196 — prioridade cardiovascular.</strong> Correr e pedalar reduzem diretamente. Ômega-3 e fibras são obrigatórios. Avalie estatina com seu médico.</div>
 
+  <div class="card ca a5"><div class="tb tba"></div>
+    <div class="lbl" style="margin-bottom:11px">Treino desta semana</div>
+    <div id="week-train-dots" style="display:flex;gap:6px;margin-bottom:13px"></div>
+    <div class="g2">
+      <div><div class="nsm" id="week-train-days" style="color:var(--a)">0</div><div class="note">dias treinados</div></div>
+      <div><div class="nsm" id="week-train-prog" style="color:var(--a)">0</div><div class="note">exercícios evoluindo</div></div>
+    </div>
+  </div>
+
   <div class="card a6"><div class="lbl" style="margin-bottom:5px">Evolução do peso</div><div class="ch-w"><canvas id="c-dw"></canvas></div></div>
 
   <div class="sh mt20 a7"><div class="sh-t">Compartilhar</div><div class="sh-l"></div></div>
@@ -463,6 +478,10 @@ input,select{font-family:var(--fb)}
 <div id="pg-treino" class="page"><div class="wrap">
   <div class="pt a1">Treino<span class="sub">planilha completa · 3 fases · 90 dias</span></div>
   <div class="a2" style="font-size:12.5px;color:var(--t3);line-height:1.7;margin-bottom:13px"><strong style="color:var(--t)">Upper/Lower 6×/semana.</strong> Peito e Bíceps na QUARTA — longe das pernas (terça). Última série de todo exercício até a <span style="color:var(--a)">falha concêntrica</span>. Falha = crescimento muscular.</div>
+  <div class="a2" style="font-size:11.5px;color:var(--t3);margin-bottom:13px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <span>✎ Toque no lápis de qualquer exercício para trocar, ajustar carga ou remover.</span>
+    <button class="btn-o" style="flex-shrink:0" onclick="resetTreinoEdits()">Restaurar padrão</button>
+  </div>
 
   <div class="wk-tabs a3">
     <button class="wk-tab on" id="pt1" onclick="swPhase(1)">Fase 1 · Dias 1–30</button>
@@ -525,6 +544,7 @@ input,select{font-family:var(--fb)}
       <div><label class="fl">Tempo (min)</label><input class="fi" type="number" id="r-time" placeholder="35"></div>
       <div><label class="fl">Tipo</label><select class="fi" id="r-type"><option value="corrida">🏃 Corrida</option><option value="ciclismo">🚴 Ciclismo</option><option value="caminhada">🚶 Caminhada</option></select></div>
     </div>
+    <div class="fg" style="grid-template-columns:1fr"><div><label class="fl">Sensação — opcional</label><select class="fi" id="r-effort"><option value="">—</option><option value="leve">🟢 Leve, tranquila</option><option value="moderado">🟡 Moderada</option><option value="dificil">🔴 Difícil, puxada</option></select></div></div>
     <button class="btn" onclick="saveR()">Salvar</button>
   </div>
   <div class="card mt12"><div class="lbl" style="margin-bottom:5px">Histórico</div><div id="r-hist"></div></div>
@@ -566,12 +586,14 @@ input,select{font-family:var(--fb)}
   </div>
 
   <div class="card a4"><div class="tb tba"></div>
-    <div class="lbl" style="margin-bottom:9px">Plano alimentar — 3 refeições + whey</div>
-    <div class="meal-r"><div class="meal-t">05:00</div><div class="meal-b"><div class="meal-nm">Ao acordar</div><div class="meal-f">Água 500ml · Leitura. Sem comida ainda.</div></div><div class="meal-kc">0kcal</div></div>
-    <div class="meal-r"><div class="meal-t">05:30</div><div class="meal-b"><div class="meal-nm">Café — Crepioca</div><div class="meal-f">Crepioca (2 ovos + 2 col. sopa goma) recheada com queijo magro + presunto · Café preto com adoçante</div></div><div class="meal-kc">~420kcal</div></div>
-    <div class="meal-r"><div class="meal-t">12:30</div><div class="meal-b"><div class="meal-nm">Almoço</div><div class="meal-f">220g frango ou peixe grelhado · Arroz integral 80g · Feijão preto 80g · Salada verde à vontade + azeite extra-virgem</div></div><div class="meal-kc">~680kcal</div></div>
-    <div class="meal-r"><div class="meal-t">18:30</div><div class="meal-b"><div class="meal-nm">Whey — Pré-treino</div><div class="meal-f">Whey isolado 35g em água. Segura a fome até o pós-treino e entrega proteína antes do esforço.</div></div><div class="meal-kc">~150kcal</div></div>
-    <div class="meal-r"><div class="meal-t">21:15</div><div class="meal-b"><div class="meal-nm">Jantar — Pós-treino</div><div class="meal-f">Salada grande (folhas + tomate + pepino, azeite) + 2 ovos cozidos OU 150g bife magro</div></div><div class="meal-kc">~420kcal</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+      <div class="lbl" style="margin-bottom:0">Plano alimentar — 3 refeições + whey</div>
+      <span class="chip cha" id="meal-today-count">0/4 hoje</span>
+    </div>
+    <div class="meal-r" style="cursor:pointer" onclick="toggleMeal('cafe')"><div class="hbx" id="meal-chk-cafe" style="margin-top:2px;flex-shrink:0"></div><div class="meal-t">05:30</div><div class="meal-b"><div class="meal-nm">Café — Crepioca</div><div class="meal-f">Crepioca (2 ovos + 2 col. sopa goma) recheada com queijo magro + presunto · Café preto com adoçante</div></div><div class="meal-kc">~420kcal</div></div>
+    <div class="meal-r" style="cursor:pointer" onclick="toggleMeal('almoco')"><div class="hbx" id="meal-chk-almoco" style="margin-top:2px;flex-shrink:0"></div><div class="meal-t">12:30</div><div class="meal-b"><div class="meal-nm">Almoço</div><div class="meal-f">220g frango ou peixe grelhado · Arroz integral 80g · Feijão preto 80g · Salada verde à vontade + azeite extra-virgem</div></div><div class="meal-kc">~680kcal</div></div>
+    <div class="meal-r" style="cursor:pointer" onclick="toggleMeal('whey')"><div class="hbx" id="meal-chk-whey" style="margin-top:2px;flex-shrink:0"></div><div class="meal-t">18:30</div><div class="meal-b"><div class="meal-nm">Whey — Pré-treino</div><div class="meal-f">Whey isolado 35g em água. Segura a fome até o pós-treino e entrega proteína antes do esforço.</div></div><div class="meal-kc">~150kcal</div></div>
+    <div class="meal-r" style="cursor:pointer" onclick="toggleMeal('jantar')"><div class="hbx" id="meal-chk-jantar" style="margin-top:2px;flex-shrink:0"></div><div class="meal-t">21:15</div><div class="meal-b"><div class="meal-nm">Jantar — Pós-treino</div><div class="meal-f">Salada grande (folhas + tomate + pepino, azeite) + 2 ovos cozidos OU 150g bife magro</div></div><div class="meal-kc">~420kcal</div></div>
     <div style="margin-top:11px;padding-top:11px;border-top:1px solid var(--w7);font-family:var(--fm);font-size:10px;color:var(--t3);text-align:right;font-weight:600">TOTAL ≈ 1900 kcal · 180g proteína</div>
   </div>
 
@@ -601,12 +623,39 @@ input,select{font-family:var(--fb)}
   <div class="sh mt20"><div class="sh-t">Registrar peso</div><div class="sh-l"></div></div>
   <div class="card">
     <div class="fg"><div><label class="fl">Data</label><input class="fi" type="date" id="w-date"></div><div><label class="fl">Peso (kg)</label><input class="fi" type="number" id="w-val" placeholder="99.5" step="0.1"></div></div>
+    <div class="fg"><div><label class="fl">Sono ontem (h) — opcional</label><input class="fi" type="number" id="w-sono" placeholder="7.5" step="0.5"></div><div></div></div>
     <button class="btn" onclick="saveW()">Salvar</button>
     <div class="wlog mt8" id="w-list"></div>
   </div>
   <div class="card mt12"><div class="lbl" style="margin-bottom:5px">Gráfico de peso</div><div class="ch-w"><canvas id="c-sw"></canvas></div></div>
   <div class="sh mt20"><div class="sh-t">Composição corporal</div><div class="sh-l"></div></div>
   <div class="card"><div class="lbl" style="margin-bottom:11px">Medidas — atualizar semanalmente</div><div class="comp-g" id="comp-grid"></div><div class="mt12"><button class="btn" onclick="saveComp()">Salvar medidas</button></div></div>
+
+  <div class="sh mt20"><div class="sh-t">Fotos de progresso</div><div class="sh-l"></div></div>
+  <div class="card">
+    <div class="lbl" style="margin-bottom:9px">Registrar foto de hoje</div>
+    <input type="file" accept="image/*" id="photo-input" style="display:none" onchange="savePhoto(event)">
+    <button class="btn" onclick="document.getElementById('photo-input').click()">Adicionar foto</button>
+    <div class="note" style="margin-top:8px">A foto fica salva só neste aparelho, dentro do app — nunca é enviada a lugar nenhum.</div>
+  </div>
+  <div class="card mt12">
+    <div class="lbl" style="margin-bottom:9px">Comparar antes / depois</div>
+    <div class="g2">
+      <div>
+        <label class="fl">Antes</label>
+        <select class="fi fi-sm" id="photo-before" onchange="renderPhotoCompare()"></select>
+      </div>
+      <div>
+        <label class="fl">Depois</label>
+        <select class="fi fi-sm" id="photo-after" onchange="renderPhotoCompare()"></select>
+      </div>
+    </div>
+    <div id="photo-compare" class="g2 mt12"></div>
+  </div>
+  <div class="card mt12">
+    <div class="lbl" style="margin-bottom:9px">Todas as fotos</div>
+    <div id="photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px"></div>
+  </div>
 </div></div>
 <!-- ═══ TREINO (planilha) ═══ -->
 <div id="pg-supp" class="page"><div class="wrap">
@@ -667,10 +716,71 @@ input,select{font-family:var(--fb)}
     <div class="mr"><div class="mr-ic">🟡</div><div class="mr-nm">Triglicerídeos</div><div class="mr-vl" style="color:var(--o)">168</div><div class="mr-un">mg/dL</div><span class="chip cho"><span class="cdot"></span>Atenção</span></div>
     <div class="mr"><div class="mr-ic">💪</div><div class="mr-nm">Testosterona</div><div class="mr-vl" style="color:var(--g)">814</div><div class="mr-un">ng/dL</div><span class="chip chg"><span class="cdot"></span>Ótimo</span></div>
   </div>
+
+  <div class="sh mt16 a7"><div class="sh-t">Lembretes</div><div class="sh-l"></div></div>
+  <div class="card a7" style="font-size:11.5px;color:var(--t3);line-height:1.6;margin-bottom:9px">
+    ⚠ Estes lembretes só funcionam com o app aberto nesta aba do navegador — não são notificações do sistema. Para lembrete de verdade fora do app, use o alarme do seu celular.
+  </div>
+  <div class="card a7" id="reminders-list"></div>
+  <div class="card a7 mt8">
+    <div class="fg">
+      <div><label class="fl">Horário</label><input class="fi" type="time" id="rem-time"></div>
+      <div><label class="fl">Mensagem</label><input class="fi" type="text" id="rem-msg" placeholder="Ex: Tomar whey"></div>
+    </div>
+    <button class="btn" onclick="addReminder()">Adicionar lembrete</button>
+  </div>
+
   <div class="sh mt16 a7"><div class="sh-t">Alertas inteligentes</div><div class="sh-l"></div></div>
   <div class="al-l a7" id="alerts"></div>
   <div class="footer-sig">Powered by <span>GSO</span> · @gsocode_</div>
 </div></div>
+
+<!-- ═══ EXERCISE EDITOR MODAL ═══ -->
+<div id="ex-editor-modal" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+  <div style="position:absolute;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto;background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--w10);padding:20px 18px 30px;animation:fadeUp .3s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+      <div class="pt" id="ex-ed-title" style="margin-bottom:0">Editar exercício</div>
+      <button class="btn-o" onclick="closeExEditor()" style="padding:8px 12px">✕</button>
+    </div>
+    <input type="hidden" id="ex-ed-key">
+    <div class="fg" style="grid-template-columns:1fr">
+      <div><label class="fl">Nome do exercício</label><input class="fi" type="text" id="ex-ed-nome" placeholder="Ex: Supino reto barra"></div>
+    </div>
+    <div class="fg">
+      <div><label class="fl">Séries × Reps</label><input class="fi" type="text" id="ex-ed-series" placeholder="Ex: 4×10–12"></div>
+      <div><label class="fl">Intensidade</label>
+        <select class="fi" id="ex-ed-rpe">
+          <option value="rpe-h">Falha</option>
+          <option value="rpe-m">Quase-falha</option>
+          <option value="rpe-l">Técnica</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg" style="grid-template-columns:1fr">
+      <div><label class="fl">Nota técnica (opcional)</label><input class="fi" type="text" id="ex-ed-nota" placeholder="Ex: Controle 3s na descida"></div>
+    </div>
+    <button class="btn" onclick="saveExEdit()">Salvar</button>
+    <button class="btn-o" id="ex-ed-delete" onclick="deleteExEdit()" style="width:100%;margin-top:10px;padding:10px;text-align:center">Remover este exercício</button>
+  </div>
+</div>
+
+<!-- ═══ WORKOUT LOG MODAL ═══ -->
+<div id="log-modal" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+  <div style="position:absolute;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto;background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--w10);padding:20px 18px 30px;animation:fadeUp .3s ease">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div class="pt" id="log-ed-title" style="margin-bottom:0">Registrar execução</div>
+      <button class="btn-o" onclick="closeLogModal()" style="padding:8px 12px">✕</button>
+    </div>
+    <div class="note" style="margin-bottom:15px">Carga e repetições reais de hoje — é isso que mostra se você está progredindo.</div>
+    <input type="hidden" id="log-ed-key">
+    <div class="fg">
+      <div><label class="fl">Carga (kg)</label><input class="fi" type="number" id="log-ed-carga" placeholder="Ex: 60" step="0.5"></div>
+      <div><label class="fl">Reps feitas</label><input class="fi" type="text" id="log-ed-reps" placeholder="Ex: 10,9,8"></div>
+    </div>
+    <button class="btn" onclick="saveLog()">Salvar registro de hoje</button>
+    <div class="mt16" id="log-history"></div>
+  </div>
+</div>
 
 <!-- ═══ STORY EXPORT MODAL ═══ -->
 <div id="story-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
@@ -723,9 +833,11 @@ function go(id){
 function saveW(){
   vib();
   const d=$('w-date').value,v=parseFloat($('w-val').value);
+  const sono=parseFloat($('w-sono').value);
   if(!d||isNaN(v))return;
-  WL.push({date:d,val:v});WL.sort((a,b)=>a.date.localeCompare(b.date));
-  S.set('a90_w',WL);$('w-val').value='';renderWList();updDash();drawCharts();genAlerts();
+  WL.push({date:d,val:v,sono:isNaN(sono)?null:sono});WL.sort((a,b)=>a.date.localeCompare(b.date));
+  S.set('a90_w',WL);$('w-val').value='';$('w-sono').value='';renderWList();updDash();drawCharts();genAlerts();
+  renderHabits(); // 'sleep' automático depende deste dado — atualiza o anel na hora
 }
 function delW(i){vib();WL.splice(i,1);S.set('a90_w',WL);renderWList();updDash();drawCharts();}
 function renderWList(){
@@ -734,7 +846,8 @@ function renderWList(){
   el.innerHTML=WL.slice().reverse().map((w,ri)=>{
     const i=WL.length-1-ri,prev=WL[i-1];let dif='';
     if(prev){const d=(w.val-prev.val).toFixed(1),cls=d<0?'wn':'wp',sg=d<0?'':'+';dif=`<span class="wdiff ${cls}">${sg}${d}kg</span>`;}
-    return`<div class="wrow"><div class="wd">${fmtD(w.date)}</div><div class="wv">${w.val}</div><span class="wkg">kg</span>${dif}<button class="btn-o" onclick="delW(${i})">×</button></div>`;
+    const sonoTag=w.sono!=null?`<span class="note" style="margin-left:8px">😴 ${w.sono}h</span>`:'';
+    return`<div class="wrow"><div class="wd">${fmtD(w.date)}</div><div class="wv">${w.val}</div><span class="wkg">kg</span>${sonoTag}${dif}<button class="btn-o" onclick="delW(${i})">×</button></div>`;
   }).join('');
 }
 function updDash(){
@@ -754,11 +867,11 @@ function updDash(){
 
 function saveR(){
   vib();
-  const d=$('r-date').value,km=parseFloat($('r-dist').value),t=parseFloat($('r-time').value),tp=$('r-type').value;
+  const d=$('r-date').value,km=parseFloat($('r-dist').value),t=parseFloat($('r-time').value),tp=$('r-type').value,ef=$('r-effort').value;
   if(!d||isNaN(km))return;
-  RL.push({date:d,km,time:isNaN(t)?null:t,pace:(!isNaN(t)&&t)?t/km:null,type:tp});
+  RL.push({date:d,km,time:isNaN(t)?null:t,pace:(!isNaN(t)&&t)?t/km:null,type:tp,effort:ef||null});
   RL.sort((a,b)=>a.date.localeCompare(b.date));S.set('a90_r',RL);
-  $('r-dist').value='';$('r-time').value='';renderRun();drawCharts();genAlerts();
+  $('r-dist').value='';$('r-time').value='';$('r-effort').value='';renderRun();drawCharts();genAlerts();
 }
 function delR(i){vib();RL.splice(i,1);S.set('a90_r',RL);renderRun();drawCharts();}
 function renderRun(){
@@ -772,9 +885,11 @@ function renderRun(){
   renderMiles(mx);renderBadges(mx,tkm);
   const el=$('r-hist');if(!el)return;
   if(!RL.length){el.innerHTML='<div class="empty">Nenhum registro.</div>';return;}
+  const effortIc={leve:'🟢',moderado:'🟡',dificil:'🔴'};
   let h='<table class="rtbl"><thead><tr><th>Data</th><th>Tipo</th><th>Dist.</th><th>Tempo</th><th>Pace</th><th></th></tr></thead><tbody>';
   RL.slice().reverse().forEach((r,ri)=>{const i=RL.length-1-ri;
-    h+=`<tr><td>${fmtD(r.date)}</td><td style="font-size:10px;color:var(--t3)">${r.type||'corrida'}</td><td><span class="rkm">${r.km.toFixed(1)}</span>km</td><td>${r.time?r.time+'min':'—'}</td><td>${(r.pace&&r.type!=='ciclismo')?fmtP(r.pace)+'/km':'—'}</td><td><button class="btn-o" onclick="delR(${i})">×</button></td></tr>`;});
+    const ef=r.effort?effortIc[r.effort]||'':'';
+    h+=`<tr><td>${fmtD(r.date)}</td><td style="font-size:10px;color:var(--t3)">${ef} ${r.type||'corrida'}</td><td><span class="rkm">${r.km.toFixed(1)}</span>km</td><td>${r.time?r.time+'min':'—'}</td><td>${(r.pace&&r.type!=='ciclismo')?fmtP(r.pace)+'/km':'—'}</td><td><button class="btn-o" onclick="delR(${i})">×</button></td></tr>`;});
   el.innerHTML=h+'</tbody></table>';
 }
 function calcP(){
@@ -818,19 +933,37 @@ function jumpToDay(i){
 /* ═══ HABITS ═══ */
 const HABS=[
   {id:'agua4',l:'💧 Água 4L'},{id:'prot',l:'🥩 Proteína 180g'},{id:'whey',l:'🥛 Whey batido'},
-  {id:'peixe',l:'🐟 Peixe/Frango'},{id:'sleep',l:'😴 Sono 8h'},{id:'treino',l:'🏋️ Treino'},
-  {id:'cardio',l:'🚴 Cardio'},{id:'mob',l:'🧘 Mobilidade'},{id:'sem_alc',l:'🚫 Sem álcool'},
-  {id:'sem_ultra',l:'🚫 Sem ultraprocessado'},{id:'cria',l:'💊 Creatina'},{id:'omega3',l:'🫙 Ômega-3'},
-  {id:'passos',l:'👟 10k passos'}
+  {id:'peixe',l:'🐟 Peixe/Frango'},{id:'cardio',l:'🚴 Cardio'},{id:'mob',l:'🧘 Mobilidade'},
+  {id:'sem_alc',l:'🚫 Sem álcool'},{id:'sem_ultra',l:'🚫 Sem ultraprocessado'},{id:'cria',l:'💊 Creatina'},
+  {id:'omega3',l:'🫙 Ômega-3'},{id:'passos',l:'👟 10k passos'}
 ];
-const HTOT=HABS.length;
+// 'treino' e 'sleep' saíram da lista manual: agora são calculados automaticamente
+// a partir do log de treino real (WLOG) e do campo de sono no registro de peso —
+// evita ter duas fontes diferentes registrando a mesma informação.
+const HABS_AUTO=[{id:'treino',l:'🏋️ Treino'},{id:'sleep',l:'😴 Sono 7h+'}];
+const HTOT=HABS.length+HABS_AUTO.length;
+function autoHabitsToday(){
+  const out={};
+  try{
+    out.treino=Object.keys(WLOG).some(k=>(WLOG[k]||[]).some(l=>l.date===td()));
+  }catch(e){out.treino=false;}
+  try{
+    const wToday=WL.find(w=>w.date===td());
+    out.sleep=!!(wToday&&wToday.sono!=null&&wToday.sono>=7);
+  }catch(e){out.sleep=false;}
+  return out;
+}
 function gH(){return HL[td()]||{};}
 function renderHabits(){
-  const ch=gH(),el=$('hab-grid');if(!el)return;
-  el.innerHTML=HABS.map(h=>{const on=!!ch[h.id];
+  const ch=gH(),auto=autoHabitsToday(),el=$('hab-grid');if(!el)return;
+  const manualHtml=HABS.map(h=>{const on=!!ch[h.id];
     return`<div class="hi ${on?'on':''}" onclick="togH('${h.id}')"><div class="hbx">${on?'✓':''}</div><div class="htx">${h.l}</div></div>`;
   }).join('');
-  const cnt=Object.values(ch).filter(Boolean).length,pct=(cnt/HTOT*100).toFixed(0);
+  const autoHtml=HABS_AUTO.map(h=>{const on=!!auto[h.id];
+    return`<div class="hi ${on?'on':''}" style="cursor:default" title="Calculado automaticamente"><div class="hbx">${on?'✓':''}</div><div class="htx">${h.l}<span style="font-size:8px;color:var(--t3);display:block;margin-top:1px">automático</span></div></div>`;
+  }).join('');
+  el.innerHTML=manualHtml+autoHtml;
+  const cnt=Object.values(ch).filter(Boolean).length+Object.values(auto).filter(Boolean).length,pct=(cnt/HTOT*100).toFixed(0);
   const ring=$('ring');
   if(ring){const off=283-(283*(cnt/HTOT));ring.style.strokeDashoffset=off;ring.style.stroke=cnt>=HTOT*.85?'var(--g)':cnt>=HTOT*.5?'var(--a)':'var(--o)';}
   txt('rn',cnt);txt('h-pct',pct+'%');txt('h-lbl',cnt+' de '+HTOT+' hábitos');txt('h-d',pct+'%');txt('dp-hpct',pct+'%');
@@ -842,6 +975,30 @@ function renderHabits(){
   txt('h-m',md?Math.round(ms/md/HTOT*100)+'%':'—');
 }
 function togH(id){vib();if(!HL[td()])HL[td()]={};HL[td()][id]=!HL[td()][id];S.set('a90_h',HL);renderHabits();drawCharts();genAlerts();}
+
+/* ═══ WEEKLY TRAINING SUMMARY — derivado do WLOG real, mostrado no Painel ═══ */
+function renderWeekTrainSummary(){
+  try{
+    const dotsEl=$('week-train-dots');
+    if(!dotsEl)return; // página ainda não renderizada
+    const days=[];
+    for(let i=6;i>=0;i--){
+      const d=new Date();d.setDate(d.getDate()-i);
+      const k=d.toISOString().slice(0,10);
+      const trained=Object.keys(WLOG).some(key=>(WLOG[key]||[]).some(l=>l.date===k));
+      days.push({date:k,trained,isToday:i===0});
+    }
+    dotsEl.innerHTML=days.map(d=>`<div style="flex:1;height:8px;border-radius:4px;background:${d.trained?'var(--a)':'var(--w7)'};${d.isToday?'box-shadow:0 0 0 1.5px var(--a25)':''}"></div>`).join('');
+    const trainedCount=days.filter(d=>d.trained).length;
+    txt('week-train-days',trainedCount);
+    let progressing=0;
+    Object.keys(WLOG).forEach(key=>{
+      const logs=(WLOG[key]||[]).filter(l=>l.carga!=null).sort((a,b)=>a.date.localeCompare(b.date));
+      if(logs.length>=2&&logs[logs.length-1].carga>logs[logs.length-2].carga)progressing++;
+    });
+    txt('week-train-prog',progressing);
+  }catch(e){console.warn('renderWeekTrainSummary failed:',e);}
+}
 
 function swPhase(n){
   vib();
@@ -1034,27 +1191,199 @@ const TR=[
     ]},
   ]},
 ];
+/* ═══ TREINO EDITOR — edições ficam em localStorage separado do TR original ═══ */
+let TE=S.get('a90_te')||{}; // TE[phaseId][dayIdx][sessIdx][exIdx] = ['nome','séries','nota','rpe'] (overrides) ou {del:true}
+let TE_ADD=S.get('a90_tea')||{}; // TE_ADD[phaseId][dayIdx][sessIdx] = [ [nome,séries,nota,rpe], ... ] (exercícios extras)
+function teKey(ph,d,s,e){return`${ph}-${d}-${s}-${e}`;}
+function getExList(ph,dayIdx,sessIdx,baseEx){
+  const out=[];
+  baseEx.forEach((e,j)=>{
+    const k=teKey(ph,dayIdx,sessIdx,j);
+    const ov=TE[k];
+    if(ov&&ov.del)return; // excluído pelo usuário
+    out.push({data:ov&&ov.data?ov.data:e,edited:!!(ov&&ov.data),origIdx:j});
+  });
+  const extra=(TE_ADD[ph]&&TE_ADD[ph][dayIdx]&&TE_ADD[ph][dayIdx][sessIdx])||[];
+  extra.forEach((e,k)=>out.push({data:e,edited:false,extraIdx:k}));
+  return out;
+}
 function renderTreino(){
   TR.forEach(ph=>{
     const el=$('ds'+ph.id);if(!el)return;
     el.innerHTML=ph.days.map((d,i)=>{
       const uid=`d${ph.id}-${i}`;
       const chips=d.chips.map(c=>`<span class="chip ${c.c}">${c.l}</span>`).join('');
-      const body=d.sess.map(s=>{
+      const body=d.sess.map((s,si)=>{
         let h='';
         if(s.l)h+=`<div class="sess-h">${s.l}</div>`;
         if(s.tip)h+=`<div class="dc-tip">${s.tip}</div>`;
         if(s.info)h+=`<div class="dc-info">${s.info}</div>`;
         if(s.warn)h+=`<div class="dc-warn">${s.warn}</div>`;
-        if(s.ex&&s.ex.length>0)h+=`<ul class="ex-ul">${s.ex.map((e,j)=>{
-          const rpe=e[3]?`<span class="rpe ${e[3]}">${e[3]==='rpe-h'?'FALHA':e[3]==='rpe-m'?'~FALHA':'TÉCNICA'}</span>`:'';
-          return`<li class="ex-li"><span class="ex-n">${String(j+1).padStart(2,'0')}</span><div class="ex-nm">${e[0]}<span class="ex-note">${e[2]||''}</span></div>${rpe}<span class="ex-s">${e[1]}</span></li>`;
-        }).join('')}</ul>`;
+        if(s.ex&&s.ex.length>0){
+          const list=getExList(ph.id,i,si,s.ex);
+          h+=`<ul class="ex-ul">${list.map((item,j)=>{
+            const e=item.data;
+            const rpe=e[3]?`<span class="rpe ${e[3]}">${e[3]==='rpe-h'?'FALHA':e[3]==='rpe-m'?'~FALHA':'TÉCNICA'}</span>`:'';
+            const editTag=item.edited?'<span style="font-size:8px;color:var(--a);margin-left:5px">editado</span>':'';
+            const editKey=item.extraIdx!==undefined?`extra-${ph.id}-${i}-${si}-${item.extraIdx}`:teKey(ph.id,i,si,item.origIdx);
+            return`<li class="ex-li" style="position:relative">
+              <span class="ex-n">${String(j+1).padStart(2,'0')}</span>
+              <div class="ex-nm">${e[0]}${editTag}<span class="ex-note">${e[2]||''}</span></div>
+              ${rpe}<span class="ex-s">${e[1]}</span>
+              <button onclick="openLogModal('${editKey}',${JSON.stringify(e[0]).replace(/"/g,'&quot;')})" style="flex-shrink:0;color:var(--a);padding:2px 4px" aria-label="Registrar execução">📝</button>
+              <button onclick="openExEditor('${editKey}',${JSON.stringify(e).replace(/"/g,'&quot;')})" style="flex-shrink:0;color:var(--t3);padding:2px 4px;margin-left:2px" aria-label="Editar exercício">✎</button>
+            </li>`;
+          }).join('')}</ul>`;
+          h+=`<button class="btn-o" style="width:100%;margin-bottom:9px" onclick="openExEditor('new-${ph.id}-${i}-${si}',null)">+ Adicionar exercício</button>`;
+        }
         return h+'<div style="height:9px"></div>';
       }).join('');
       return`<div class="dc" id="${uid}"><button class="dc-btn" onclick="togDC('${uid}')"><span class="dc-idx">${d.n}</span><span class="dc-name">${d.nm}</span><div class="dc-chips">${chips}</div><svg class="dc-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="dc-body" id="db-${uid}">${body}</div></div>`;
     }).join('');
   });
+}
+function openExEditor(key,data){
+  vib();
+  const modal=$('ex-editor-modal');if(!modal)return;
+  $('ex-ed-key').value=key;
+  const isNew=key.startsWith('new-');
+  const isExtra=key.startsWith('extra-');
+  $('ex-ed-title').textContent=isNew?'Adicionar exercício':'Editar exercício';
+  $('ex-ed-nome').value=data?data[0]:'';
+  $('ex-ed-series').value=data?data[1]:'';
+  $('ex-ed-nota').value=data?(data[2]||''):'';
+  $('ex-ed-rpe').value=data?(data[3]||'rpe-m'):'rpe-m';
+  $('ex-ed-delete').style.display=(isNew)?'none':'block';
+  modal.style.display='block';
+}
+function closeExEditor(){vib();const m=$('ex-editor-modal');if(m)m.style.display='none';}
+function saveExEdit(){
+  vib();
+  const key=$('ex-ed-key').value;
+  const nome=$('ex-ed-nome').value.trim();
+  const series=$('ex-ed-series').value.trim();
+  const nota=$('ex-ed-nota').value.trim();
+  const rpe=$('ex-ed-rpe').value;
+  if(!nome||!series){closeExEditor();return;}
+  const data=[nome,series,nota,rpe];
+  if(key.startsWith('new-')){
+    const[,ph,d,s]=key.split('-');
+    if(!TE_ADD[ph])TE_ADD[ph]={};
+    if(!TE_ADD[ph][d])TE_ADD[ph][d]={};
+    if(!TE_ADD[ph][d][s])TE_ADD[ph][d][s]=[];
+    TE_ADD[ph][d][s].push(data);
+    S.set('a90_tea',TE_ADD);
+  }else if(key.startsWith('extra-')){
+    const[,ph,d,s,idx]=key.split('-');
+    if(TE_ADD[ph]&&TE_ADD[ph][d]&&TE_ADD[ph][d][s])TE_ADD[ph][d][s][idx]=data;
+    S.set('a90_tea',TE_ADD);
+  }else{
+    TE[key]={data};
+    S.set('a90_te',TE);
+  }
+  closeExEditor();renderTreino();
+}
+function deleteExEdit(){
+  vib();
+  const key=$('ex-ed-key').value;
+  if(key.startsWith('extra-')){
+    const[,ph,d,s,idx]=key.split('-');
+    if(TE_ADD[ph]&&TE_ADD[ph][d]&&TE_ADD[ph][d][s])TE_ADD[ph][d][s].splice(idx,1);
+    S.set('a90_tea',TE_ADD);
+  }else if(!key.startsWith('new-')){
+    TE[key]={del:true};
+    S.set('a90_te',TE);
+  }
+  closeExEditor();renderTreino();
+}
+function resetTreinoEdits(){
+  if(!confirm('Restaurar o treino para o protocolo original? Isso apaga todas as suas edições.'))return;
+  vib();
+  TE={};TE_ADD={};
+  S.set('a90_te',TE);S.set('a90_tea',TE_ADD);
+  renderTreino();
+}
+
+/* ═══ MEAL CHECKLIST — 4 refeições reais do plano, marcadas por dia ═══ */
+const MEALS=['cafe','almoco','whey','jantar'];
+function gMeals(){return MC[td()]||{};}
+let MC=S.get('a90_mc')||{};
+function toggleMeal(id){
+  vib();
+  if(!MC[td()])MC[td()]={};
+  MC[td()][id]=!MC[td()][id];
+  S.set('a90_mc',MC);
+  renderMeals();
+}
+function renderMeals(){
+  const m=gMeals();
+  let cnt=0;
+  MEALS.forEach(id=>{
+    const el=$('meal-chk-'+id);
+    const on=!!m[id];
+    if(on)cnt++;
+    if(el){
+      el.textContent=on?'✓':'';
+      el.style.background=on?'var(--a)':'var(--s2)';
+      el.style.borderColor=on?'var(--a)':'var(--t3)';
+      el.style.color=on?'#000':'transparent';
+      el.style.width='21px';el.style.height='21px';el.style.borderRadius='6px';el.style.border='1.5px solid';
+      el.style.display='flex';el.style.alignItems='center';el.style.justifyContent='center';el.style.fontSize='11px';
+    }
+  });
+  const badge=$('meal-today-count');
+  if(badge){
+    badge.textContent=cnt+'/4 hoje';
+    badge.className='chip '+(cnt===4?'chg':cnt>0?'cha':'chx');
+  }
+}
+
+/* ═══ WORKOUT EXECUTION LOG — carga e reps reais por exercício, por data ═══ */
+let WLOG=S.get('a90_wlog')||{}; // WLOG[exerciseKey] = [{date,carga,reps}]
+function openLogModal(key,nome){
+  vib();
+  const modal=$('log-modal');if(!modal)return;
+  $('log-ed-key').value=key;
+  $('log-ed-title').textContent='Registrar: '+nome;
+  $('log-ed-carga').value='';
+  $('log-ed-reps').value='';
+  renderLogHistory(key);
+  modal.style.display='block';
+}
+function closeLogModal(){vib();const m=$('log-modal');if(m)m.style.display='none';}
+function saveLog(){
+  vib();
+  const key=$('log-ed-key').value;
+  const carga=parseFloat($('log-ed-carga').value);
+  const reps=$('log-ed-reps').value.trim();
+  if(isNaN(carga)&&!reps)return;
+  if(!WLOG[key])WLOG[key]=[];
+  const existing=WLOG[key].findIndex(l=>l.date===td());
+  const entry={date:td(),carga:isNaN(carga)?null:carga,reps};
+  if(existing>=0)WLOG[key][existing]=entry;
+  else WLOG[key].push(entry);
+  WLOG[key].sort((a,b)=>a.date.localeCompare(b.date));
+  try{S.set('a90_wlog',WLOG);}catch(e){console.warn('workout log save failed:',e);}
+  renderLogHistory(key);
+  renderHabits(); // 'treino' automático depende deste dado — atualiza o anel na hora
+  updDash();
+  renderWeekTrainSummary();
+}
+function renderLogHistory(key){
+  const el=$('log-history');if(!el)return;
+  const logs=WLOG[key]||[];
+  if(!logs.length){el.innerHTML='<div class="empty">Nenhum registro ainda para este exercício.</div>';return;}
+  const rows=logs.slice().reverse().slice(0,8).map((l,i)=>{
+    const prev=logs.length-2-i>=0?logs[logs.length-2-i]:null;
+    let trend='';
+    if(prev&&l.carga!=null&&prev.carga!=null){
+      const diff=l.carga-prev.carga;
+      if(diff>0)trend=`<span class="wdiff wn">+${diff}kg</span>`;
+      else if(diff<0)trend=`<span class="wdiff wp">${diff}kg</span>`;
+    }
+    return`<div class="wrow"><div class="wd">${fmtD(l.date)}</div><div class="wv">${l.carga!=null?l.carga:'—'}</div><span class="wkg">${l.carga!=null?'kg':''}</span><span class="note" style="margin-left:8px">${l.reps||''}</span>${trend}</div>`;
+  }).join('');
+  el.innerHTML=`<div class="lbl" style="margin-bottom:8px">Histórico</div><div class="wlog">${rows}</div>`;
 }
 
 /* ═══ SUPPLEMENTS — timing ajustado: café 5h30, almoço 12h30, whey 18h30, jantar 21h15 ═══ */
@@ -1095,13 +1424,155 @@ function renderComp(){
 }
 function saveComp(){vib();CF.forEach(f=>{const v=$('cf-'+f.id);if(v&&v.value)CM[f.id]=parseFloat(v.value);});S.set('a90_c',CM);}
 
+/* ═══ PROGRESS PHOTOS — comprimidas no client, guardadas em localStorage ═══ */
+let PH=S.get('a90_ph')||[]; // [{date, data(base64 jpeg comprimido)}]
+const PHOTO_MAX=40; // limite de fotos guardadas, pra não estourar cota do localStorage
+function savePhoto(evt){
+  try{
+    const file=evt.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        try{
+          const maxW=640;
+          const scale=Math.min(1,maxW/img.width);
+          const canvas=document.createElement('canvas');
+          canvas.width=img.width*scale;
+          canvas.height=img.height*scale;
+          const ctx=canvas.getContext('2d');
+          ctx.drawImage(img,0,0,canvas.width,canvas.height);
+          const compressed=canvas.toDataURL('image/jpeg',0.72);
+          PH.push({date:td(),data:compressed});
+          if(PH.length>PHOTO_MAX)PH.shift(); // remove a mais antiga se passar do limite
+          const ok=trySavePhotos();
+          if(ok){vib();renderPhotos();}
+        }catch(err){console.warn('photo compression failed:',err);alert('Não foi possível processar essa foto.');}
+      };
+      img.onerror=()=>alert('Não foi possível ler essa imagem.');
+      img.src=e.target.result;
+    };
+    reader.onerror=()=>alert('Não foi possível ler esse arquivo.');
+    reader.readAsDataURL(file);
+    evt.target.value='';
+  }catch(e){console.warn('savePhoto failed:',e);}
+}
+function trySavePhotos(){
+  try{S.set('a90_ph',PH);return true;}
+  catch(e){
+    console.warn('photo storage quota exceeded:',e);
+    PH.pop();
+    alert('Armazenamento cheio. Apague fotos antigas antes de adicionar novas — o espaço do app neste aparelho é limitado.');
+    return false;
+  }
+}
+function deletePhoto(idx){
+  if(!confirm('Apagar esta foto?'))return;
+  vib();
+  PH.splice(idx,1);
+  S.set('a90_ph',PH);
+  renderPhotos();
+}
+function renderPhotos(){
+  try{
+    const grid=$('photo-grid');
+    if(grid){
+      if(!PH.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">Nenhuma foto ainda.</div>';}
+      else{
+        grid.innerHTML=PH.slice().reverse().map((p,ri)=>{
+          const i=PH.length-1-ri;
+          return`<div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:3/4;background:var(--s2)">
+            <img src="${p.data}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(0,0,0,.75),transparent);padding:5px 6px;font-family:var(--fm);font-size:8.5px;color:#fff">${fmtD(p.date)}</div>
+            <button onclick="deletePhoto(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;width:20px;height:20px;border-radius:50%;font-size:11px;line-height:1">✕</button>
+          </div>`;
+        }).join('');
+      }
+    }
+    const beforeSel=$('photo-before'),afterSel=$('photo-after');
+    if(beforeSel&&afterSel){
+      const opts=PH.map((p,i)=>`<option value="${i}">${fmtD(p.date)}</option>`).join('');
+      const hadSelection=beforeSel.value!==''&&afterSel.value!=='';
+      beforeSel.innerHTML='<option value="">—</option>'+opts;
+      afterSel.innerHTML='<option value="">—</option>'+opts;
+      if(!hadSelection&&PH.length>=2){beforeSel.value='0';afterSel.value=String(PH.length-1);}
+      renderPhotoCompare();
+    }
+  }catch(e){console.warn('renderPhotos failed:',e);}
+}
+function renderPhotoCompare(){
+  try{
+    const el=$('photo-compare');if(!el)return;
+    const bi=$('photo-before').value,ai=$('photo-after').value;
+    if(bi===''||ai===''||!PH[bi]||!PH[ai]){el.innerHTML='';return;}
+    const mk=(p,lbl)=>`<div><div style="border-radius:12px;overflow:hidden;aspect-ratio:3/4;background:var(--s2)"><img src="${p.data}" style="width:100%;height:100%;object-fit:cover"></div><div class="note" style="text-align:center;margin-top:6px">${lbl} · ${fmtD(p.date)}</div></div>`;
+    el.innerHTML=mk(PH[bi],'Antes')+mk(PH[ai],'Depois');
+  }catch(e){console.warn('renderPhotoCompare failed:',e);}
+}
+
 /* ═══ ALERTS ═══ */
+/* ═══ LOCAL REMINDERS — só disparam com o app aberto (sem Service Worker de push real) ═══ */
+let REM=S.get('a90_rem')||[]; // [{id,time:'HH:MM',msg,lastFired:'YYYY-MM-DD-HH:MM'}]
+function addReminder(){
+  vib();
+  const time=$('rem-time').value,msg=$('rem-msg').value.trim();
+  if(!time||!msg)return;
+  REM.push({id:Date.now(),time,msg,lastFired:null});
+  REM.sort((a,b)=>a.time.localeCompare(b.time));
+  S.set('a90_rem',REM);
+  $('rem-msg').value='';
+  renderReminders();
+}
+function deleteReminder(id){
+  vib();
+  REM=REM.filter(r=>r.id!==id);
+  S.set('a90_rem',REM);
+  renderReminders();
+}
+function renderReminders(){
+  const el=$('reminders-list');if(!el)return;
+  if(!REM.length){el.innerHTML='<div class="empty">Nenhum lembrete configurado.</div>';return;}
+  el.innerHTML=REM.map(r=>`<div class="mr"><div class="mr-ic">⏰</div><div class="mr-nm">${r.msg}</div><div class="mr-vl" style="font-size:16px">${r.time}</div><button class="btn-o" onclick="deleteReminder(${r.id})">×</button></div>`).join('');
+}
+function checkReminders(){
+  try{
+    const now=new Date();
+    const hhmm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    const stamp=td()+'-'+hhmm;
+    REM.forEach(r=>{
+      if(r.time===hhmm&&r.lastFired!==stamp){
+        r.lastFired=stamp;
+        S.set('a90_rem',REM);
+        vib();
+        showReminderToast(r.msg);
+      }
+    });
+  }catch(e){console.warn('checkReminders failed:',e);}
+}
+function showReminderToast(msg){
+  try{
+    const toast=document.createElement('div');
+    toast.textContent='⏰ '+msg;
+    toast.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:900;background:var(--s1);border:1px solid var(--a25);color:var(--t);padding:13px 20px;border-radius:14px;font-size:13px;font-weight:600;box-shadow:0 8px 30px -8px rgba(0,0,0,.6);animation:fadeUp .3s ease';
+    document.body.appendChild(toast);
+    setTimeout(()=>{toast.style.transition='opacity .4s';toast.style.opacity='0';setTimeout(()=>toast.remove(),400);},4500);
+  }catch(e){console.warn('showReminderToast failed:',e);}
+}
+
 function genAlerts(){
   const el=$('alerts');if(!el)return;
   const corridas=RL.filter(r=>r.type==='corrida'||!r.type);
   const mx=corridas.reduce((m,r)=>Math.max(m,r.km),0),tk=corridas.reduce((s,r)=>s+r.km,0);
   const todH=Object.values(gH()).filter(Boolean).length;const als=[];
-  if(WL.length>=3){const l3=WL.slice(-3);if(l3[2].val>=l3[0].val)als.push({ic:'⚠️',tx:'<strong>Peso estagnado.</strong> Com déficit já agressivo, confira se as 3 refeições + whey não cresceram de porção. Adicione 15min de cardio ao sábado.',urg:true});}
+  if(WL.length>=3){
+    const l3=WL.slice(-3);
+    if(l3[2].val>=l3[0].val){
+      const sonoBaixo=l3.filter(w=>w.sono!=null&&w.sono<7).length;
+      const sonoNote=sonoBaixo>=2?' Seu sono registrado esteve abaixo de 7h em mais da metade desses dias — isso sozinho já explica boa parte de um platô.':'';
+      als.push({ic:'⚠️',tx:`<strong>Peso estagnado.</strong> Com déficit já agressivo, confira se as 3 refeições + whey não cresceram de porção.${sonoNote} Adicione 15min de cardio ao sábado.`,urg:true});
+    }
+  }
   if(corridas.length>=2&&corridas[corridas.length-1].km>corridas.slice(0,-1).reduce((m,r)=>Math.max(m,r.km),0))als.push({ic:'🏅',tx:`<strong>Novo recorde de corrida!</strong> ${corridas[corridas.length-1].km.toFixed(1)}km registrado.`});
   if(mx>=15)als.push({ic:'🏆',tx:'<strong>15km atingidos!</strong> Você completou o objetivo. Próximo: meia-maratona.'});
   else if(mx>=10)als.push({ic:'🎯',tx:'<strong>10km alcançados!</strong> Na reta final para os 15km.'});
@@ -1258,11 +1729,12 @@ function downloadStory(){
 const _origTogH=togH;
 togH=function(id){_origTogH(id);renderStreak();};
 
-/* ═══ INIT (v4 final) ═══ */
+/* ═══ INIT (v7 final) ═══ */
 (function(){
   const t=td();['w-date','r-date'].forEach(id=>{const e=$(id);if(e)e.value=t;});
   renderWList();updDash();renderRun();renderRunPlan();renderTreino();renderCardio();renderMob();renderHabits();renderSupps();renderComp();renderWGrid();genAlerts();
-  renderStreak();renderGreeting();
+  renderStreak();renderGreeting();renderPhotos();renderReminders();renderMeals();renderWeekTrainSummary();
+  setInterval(checkReminders,20000);
   setTimeout(drawCharts,120);
 })();
 </script>
