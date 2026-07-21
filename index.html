@@ -30,6 +30,12 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t);font-family:var(--fb);font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--a);outline-offset:3px}
+.skip-link{position:fixed;z-index:1000;top:10px;left:50%;transform:translate(-50%,-160%);padding:10px 14px;border-radius:9px;background:var(--a);color:#000;font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:transform .2s}
+.skip-link:focus{transform:translate(-50%,0)}
+.app-toast{position:fixed;z-index:950;left:50%;bottom:76px;transform:translate(-50%,130px);max-width:min(92vw,420px);padding:12px 16px;border:1px solid var(--a25);border-radius:12px;background:rgba(12,14,23,.96);box-shadow:0 16px 42px rgba(0,0,0,.42);color:var(--t);font-size:12px;text-align:center;transition:transform .28s cubic-bezier(.2,.9,.2,1)}
+.app-toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.a1,.a2,.a3,.a4,.a5,.a6,.a7,.h-dot,.al-ic.urgent,.spinner{animation:none!important}.pb-f,.rfg,.app-toast{transition-duration:.01ms!important}}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E")}
 body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:600px;
@@ -355,7 +361,7 @@ input,select{font-family:var(--fb)}
 .bdg.on .bdg-l{color:var(--a)}
 .empty{text-align:center;padding:28px;font-size:13px;color:var(--t3)}
 .run-big{background:linear-gradient(155deg,var(--a08),var(--s1) 60%);border:1px solid var(--a25);border-radius:22px;padding:23px;position:relative;overflow:hidden;margin-bottom:11px}
-.run-big::after{content:'15';font-family:var(--fn);font-size:135px;position:absolute;right:-10px;bottom:-34px;color:var(--a08);pointer-events:none;letter-spacing:-4px}
+.run-big::after{content:'21';font-family:var(--fn);font-size:135px;position:absolute;right:-10px;bottom:-34px;color:var(--a08);pointer-events:none;letter-spacing:-4px}
 @media(max-width:360px){.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.bdg-g{grid-template-columns:repeat(3,1fr)}.supp-grid{grid-template-columns:1fr}.wgrid{grid-template-columns:repeat(4,1fr)}}
 
 /* ═══ v4 ADDITIONS ═══ */
@@ -399,7 +405,9 @@ input,select{font-family:var(--fb)}
 .spinner{width:16px;height:16px;border:2px solid var(--w10);border-top-color:var(--a);border-radius:50%;animation:spin .7s linear infinite}
 </style>
 </head><body>
-<nav class="bnav">
+<a class="skip-link" href="#main-content">Ir para o conteúdo</a>
+<div class="app-toast" id="app-toast" role="status" aria-live="polite"></div>
+<nav class="bnav" aria-label="Navegação principal">
   <button class="bn on" onclick="go('dash')"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
   <button class="bn" onclick="go('treino')"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2m14 0h2M5 12h14M5 9v6m14-6v6" stroke-linecap="round"/></svg>Treino</button>
   <button class="bn" onclick="go('cardio')"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>Cardio</button>
@@ -409,7 +417,7 @@ input,select{font-family:var(--fb)}
 </nav>
 
 <!-- ═══ PAINEL ═══ -->
-<div id="pg-dash" class="page on"><div class="wrap">
+<main id="main-content" tabindex="-1"><div id="pg-dash" class="page on"><div class="wrap">
   <div class="hero a1">
     <div class="h-eye"><div class="h-dot"></div><span id="dash-greeting">Athlete OS — 90 Dias para Tirar a Camisa</span></div>
     <div class="h-h">Giovanne.<br><span class="acc">90 dias.</span></div>
@@ -454,7 +462,7 @@ input,select{font-family:var(--fb)}
     <div class="tl-item ph3"><div class="tl-card" style="border-color:var(--p18)"><div class="tl-h"><span class="tl-n" style="color:var(--p)">FASE 3</span><span class="tl-nm">Polimento Final</span></div><div class="tl-wk">Dias 61–90</div><div class="tl-desc">Definição máxima. Sódio reduzido, densidade de treino maior (menos descanso). Resultado no espelho: físico definido e forte.</div><div class="tl-ms"><div class="tl-m">Kcal: <span>1900/dia</span></div><div class="tl-m">Meta: <span>−5kg</span></div><div class="tl-m">Foco: <span>Definição</span></div></div></div></div>
   </div>
 
-  <div class="card cr a5" style="font-size:12.5px;line-height:1.75;color:var(--t2)">⚠ <strong style="color:var(--t)">LDL 196 — prioridade cardiovascular.</strong> Correr e pedalar reduzem diretamente. Ômega-3 e fibras são obrigatórios. Avalie estatina com seu médico.</div>
+  <div class="card cr a5" style="font-size:12.5px;line-height:1.75;color:var(--t2)">⚠ <strong style="color:var(--t)">LDL 196 — prioridade cardiovascular.</strong> Atividade física, alimentação e acompanhamento profissional fazem parte do cuidado. Este app organiza hábitos, mas não substitui avaliação médica nem prescrição.</div>
 
   <div class="card ca a5"><div class="tb tba"></div>
     <div class="lbl" style="margin-bottom:11px">Treino desta semana</div>
@@ -509,13 +517,14 @@ input,select{font-family:var(--fb)}
 <div id="pg-cardio" class="page"><div class="wrap">
   <div class="pt a1">Cardio</div>
   <div class="run-big a2">
-    <div class="lbl" style="margin-bottom:7px">Road to 15km</div>
+    <div class="lbl" style="margin-bottom:7px">Road to 21km · meia maratona</div>
     <div style="display:flex;align-items:flex-end;gap:9px;margin:4px 0">
       <span id="r-maxbig" style="font-family:var(--fn);font-size:70px;line-height:1;color:var(--a)">0</span>
-      <span style="font-family:var(--fn);font-size:27px;color:var(--t3);margin-bottom:9px"> / 15km</span>
+      <span style="font-family:var(--fn);font-size:27px;color:var(--t3);margin-bottom:9px"> / 21km</span>
     </div>
     <div class="pb-t"><div id="r-prog" class="pb-f" style="background:var(--a);width:0%"></div></div>
-    <div class="pb-l"><span>0</span><span id="r-pct">0%</span><span>15km</span></div>
+    <div class="pb-l"><span>0</span><span id="r-pct">0%</span><span>21km</span></div>
+    <div class="note mt8" id="r-deadline">Meta: meia maratona em julho de 2027</div>
     <div class="mile-strip mt12" id="r-miles"></div>
   </div>
   <div class="g3 a3">
@@ -529,7 +538,7 @@ input,select{font-family:var(--fb)}
   <div class="card a4" style="margin-bottom:9px"><div class="tb tbo"></div><div class="lbl" style="margin-bottom:9px">Fase 1 · Dias 1–30</div><div id="c-ph1"></div></div>
   <div class="card a5" style="margin-bottom:9px"><div class="tb tbb"></div><div class="lbl" style="margin-bottom:9px">Fase 2 · Dias 31–60</div><div id="c-ph2"></div></div>
   <div class="card a6" style="margin-bottom:15px"><div class="tb tbp"></div><div class="lbl" style="margin-bottom:9px">Fase 3 · Dias 61–90</div><div id="c-ph3"></div></div>
-  <div class="sh mt4"><div class="sh-t">Planilha de corrida — 22 semanas</div><div class="sh-l"></div></div>
+  <div class="sh mt4"><div class="sh-t">Planilha de corrida — base até 15 km</div><div class="sh-l"></div></div>
   <div style="font-size:12px;color:var(--t2);margin-bottom:11px;line-height:1.65;background:var(--a08);border-left:2.5px solid var(--a);padding:11px;border-radius:0 10px 10px 0">
     <strong>🏃 Proteção Articular:</strong> Cadência de <strong>170 a 180 passos por minuto</strong> reduz o impacto nos joelhos e evita canelite. Passos curtos e rápidos, sem "alcançar" muito à frente.
   </div>
@@ -733,10 +742,10 @@ input,select{font-family:var(--fb)}
   <div class="sh mt16 a7"><div class="sh-t">Alertas inteligentes</div><div class="sh-l"></div></div>
   <div class="al-l a7" id="alerts"></div>
   <div class="footer-sig">Powered by <span>GSO</span> · @gsocode_</div>
-</div></div>
+</div></div></main>
 
 <!-- ═══ EXERCISE EDITOR MODAL ═══ -->
-<div id="ex-editor-modal" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+<div id="ex-editor-modal" role="dialog" aria-modal="true" aria-labelledby="ex-ed-title" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
   <div style="position:absolute;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto;background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--w10);padding:20px 18px 30px;animation:fadeUp .3s ease">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
       <div class="pt" id="ex-ed-title" style="margin-bottom:0">Editar exercício</div>
@@ -765,7 +774,7 @@ input,select{font-family:var(--fb)}
 </div>
 
 <!-- ═══ WORKOUT LOG MODAL ═══ -->
-<div id="log-modal" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+<div id="log-modal" role="dialog" aria-modal="true" aria-labelledby="log-ed-title" style="display:none;position:fixed;inset:0;z-index:520;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
   <div style="position:absolute;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto;background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--w10);padding:20px 18px 30px;animation:fadeUp .3s ease">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <div class="pt" id="log-ed-title" style="margin-bottom:0">Registrar execução</div>
@@ -783,7 +792,7 @@ input,select{font-family:var(--fb)}
 </div>
 
 <!-- ═══ STORY EXPORT MODAL ═══ -->
-<div id="story-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
+<div id="story-modal" role="dialog" aria-modal="true" aria-label="Exportar story do dia" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)">
   <div style="position:absolute;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto;background:var(--s1);border-radius:24px 24px 0 0;border-top:1px solid var(--w10);padding:20px 18px 30px;animation:fadeUp .3s ease">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
       <div class="pt" style="margin-bottom:0">Story do Dia</div>
@@ -811,22 +820,35 @@ input,select{font-family:var(--fb)}
 </div>
 <script>
 const vib=()=>{try{if(navigator.vibrate)navigator.vibrate(45)}catch(e){}};
-const S={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+const S={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(error){console.warn('storage save failed:',k,error);showToast?.('Não foi possível salvar neste dispositivo. Libere espaço e tente novamente.');return false}}};
 let WL=S.get('a90_w')||[],RL=S.get('a90_r')||[],HL=S.get('a90_h')||{},PL=S.get('a90_p')||{},CM=S.get('a90_c')||{};
 const $=id=>document.getElementById(id);
 const txt=(id,v)=>{const e=$(id);if(e)e.textContent=v};
+const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
 const fmtD=s=>{if(!s)return'—';const[,m,d]=s.split('-');return`${d}/${m}`};
 const fmtP=p=>{const m=Math.floor(p),s=Math.round((p-m)*60);return`${m}:${s.toString().padStart(2,'0')}`};
-const td=()=>new Date().toISOString().slice(0,10);
+const td=(date=new Date())=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+let toastTimer;
+function showToast(message){const el=$('app-toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+function refreshDashboard(){renderWList();updDash();renderRun();renderHabits();renderStreak();renderWeekTrainSummary();genAlerts();drawCharts();}
 const PAGES=['dash','treino','cardio','nutri','supp','habitos'];
+const HALF_MARATHON_KM=21;
+function renderHalfMarathonDeadline(){
+  const now=new Date(),deadline=new Date(now.getFullYear()+1,now.getMonth(),1);
+  const month=deadline.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  txt('r-deadline',`Meta: meia maratona em ${month}`);
+}
 
 function go(id){
   vib();
+  if(!PAGES.includes(id))return;
+  S.set('a90_page',id);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
   $('pg-'+id).classList.add('on');
   document.querySelectorAll('.bn')[PAGES.indexOf(id)].classList.add('on');
-  window.scrollTo({top:0,behavior:'instant'});
+  window.scrollTo({top:0,behavior:'auto'});
+  const main=$('main-content');if(main)main.focus({preventScroll:true});
   setTimeout(drawCharts,80);
 }
 
@@ -834,12 +856,13 @@ function saveW(){
   vib();
   const d=$('w-date').value,v=parseFloat($('w-val').value);
   const sono=parseFloat($('w-sono').value);
-  if(!d||isNaN(v))return;
-  WL.push({date:d,val:v,sono:isNaN(sono)?null:sono});WL.sort((a,b)=>a.date.localeCompare(b.date));
-  S.set('a90_w',WL);$('w-val').value='';$('w-sono').value='';renderWList();updDash();drawCharts();genAlerts();
-  renderHabits(); // 'sleep' automático depende deste dado — atualiza o anel na hora
+  if(!d||isNaN(v)){showToast('Informe uma data e um peso válido.');return;}
+  const entry={date:d,val:v,sono:isNaN(sono)?null:sono},existing=WL.findIndex(item=>item.date===d);
+  if(existing>=0)WL[existing]=entry;else WL.push(entry);
+  WL.sort((a,b)=>a.date.localeCompare(b.date));S.set('a90_w',WL);$('w-val').value='';$('w-sono').value='';refreshDashboard();
+  showToast(existing>=0?'Registro do dia atualizado.':'Peso registrado com sucesso.');
 }
-function delW(i){vib();WL.splice(i,1);S.set('a90_w',WL);renderWList();updDash();drawCharts();}
+function delW(i){vib();WL.splice(i,1);S.set('a90_w',WL);refreshDashboard();showToast('Registro de peso removido.');}
 function renderWList(){
   const el=$('w-list');if(!el)return;
   if(!WL.length){el.innerHTML='<div class="empty">Nenhum registro ainda.</div>';return;}
@@ -868,17 +891,17 @@ function updDash(){
 function saveR(){
   vib();
   const d=$('r-date').value,km=parseFloat($('r-dist').value),t=parseFloat($('r-time').value),tp=$('r-type').value,ef=$('r-effort').value;
-  if(!d||isNaN(km))return;
+  if(!d||isNaN(km)||km<=0){showToast('Informe uma data e uma distância maior que zero.');return;}
   RL.push({date:d,km,time:isNaN(t)?null:t,pace:(!isNaN(t)&&t)?t/km:null,type:tp,effort:ef||null});
   RL.sort((a,b)=>a.date.localeCompare(b.date));S.set('a90_r',RL);
-  $('r-dist').value='';$('r-time').value='';$('r-effort').value='';renderRun();drawCharts();genAlerts();
+  $('r-dist').value='';$('r-time').value='';$('r-effort').value='';refreshDashboard();showToast('Atividade registrada. Ótimo trabalho!');
 }
-function delR(i){vib();RL.splice(i,1);S.set('a90_r',RL);renderRun();drawCharts();}
+function delR(i){vib();RL.splice(i,1);S.set('a90_r',RL);refreshDashboard();showToast('Atividade removida.');}
 function renderRun(){
   const corridas=RL.filter(r=>r.type==='corrida'||!r.type);
   const tkm=corridas.reduce((s,r)=>s+r.km,0),mx=corridas.reduce((m,r)=>Math.max(m,r.km),0);
   let ps=0,pc=0;corridas.forEach(r=>{if(r.pace){ps+=r.pace;pc++;}});
-  const ap=pc?fmtP(ps/pc):'—',ms=mx?mx.toFixed(1):'—',pg=Math.min(100,(mx/15*100)).toFixed(1);
+  const ap=pc?fmtP(ps/pc):'—',ms=mx?mx.toFixed(1):'—',pg=Math.min(100,(mx/HALF_MARATHON_KM*100)).toFixed(1);
   txt('r-tot',tkm.toFixed(1));txt('r-max',ms);txt('r-pace',ap);txt('dp-tkm',tkm.toFixed(0));
   txt('r-maxbig',ms==='—'?'0':ms);
   const rp=$('r-prog');if(rp)rp.style.width=pg+'%';txt('r-pct',pg+'%');
@@ -899,15 +922,15 @@ function calcP(){
 }
 function renderMiles(mx){
   const el=$('r-miles');if(!el)return;
-  el.innerHTML=[1,3,5,8,10,12,15].map(k=>{
+  el.innerHTML=[1,3,5,8,10,12,15,18,21].map(k=>{
     const done=mx>=k,cur=!done&&mx>=k*.65;
     return`<div class="mile ${done?'done':cur?'now':''}"><div class="mile-ic">${done?'✓':cur?'→':'○'}</div><div class="mile-km">${k}</div><div class="mile-u">km</div></div>`;
   }).join('');
 }
 function renderBadges(mx,tk){
   const el=$('bdg');if(!el)return;
-  const B=[{k:5,l:'5km',t:'m'},{k:10,l:'10km',t:'m'},{k:15,l:'15km',t:'m'},{k:50,l:'50km',t:'t'},{k:100,l:'100km',t:'t'},{k:250,l:'250km',t:'t'},{k:500,l:'500km',t:'t'},{k:1000,l:'1000km',t:'t'}];
-  const IC=['✦','✦✦','✦✦✦','◉','◎','★','★★','♛'];
+  const B=[{k:5,l:'5km',t:'m'},{k:10,l:'10km',t:'m'},{k:15,l:'15km',t:'m'},{k:21,l:'21km',t:'m'},{k:50,l:'50km',t:'t'},{k:100,l:'100km',t:'t'},{k:250,l:'250km',t:'t'},{k:500,l:'500km',t:'t'}];
+  const IC=['✦','✦✦','✦✦✦','♛','◉','◎','★','★★'];
   el.innerHTML=B.map((b,i)=>{const e=b.t==='m'?mx>=b.k:tk>=b.k;
     return`<div class="bdg ${e?'on':'locked'}"><div class="bdg-ic" style="color:${e?'var(--a)':'var(--t3)'}">${IC[i]}</div><div class="bdg-l">${b.l}</div></div>`;}).join('');
 }
@@ -953,6 +976,13 @@ function autoHabitsToday(){
   }catch(e){out.sleep=false;}
   return out;
 }
+function habitCount(date=td()){
+  const manual=HL[date]||{};
+  let automatic={treino:false,sleep:false};
+  try{automatic.treino=Object.values(WLOG||{}).some(logs=>(logs||[]).some(log=>log.date===date));}catch(e){}
+  try{const weight=WL.find(item=>item.date===date);automatic.sleep=!!(weight&&weight.sono!=null&&weight.sono>=7);}catch(e){}
+  return Object.values(manual).filter(Boolean).length+Object.values(automatic).filter(Boolean).length;
+}
 function gH(){return HL[td()]||{};}
 function renderHabits(){
   const ch=gH(),auto=autoHabitsToday(),el=$('hab-grid');if(!el)return;
@@ -963,15 +993,15 @@ function renderHabits(){
     return`<div class="hi ${on?'on':''}" style="cursor:default" title="Calculado automaticamente"><div class="hbx">${on?'✓':''}</div><div class="htx">${h.l}<span style="font-size:8px;color:var(--t3);display:block;margin-top:1px">automático</span></div></div>`;
   }).join('');
   el.innerHTML=manualHtml+autoHtml;
-  const cnt=Object.values(ch).filter(Boolean).length+Object.values(auto).filter(Boolean).length,pct=(cnt/HTOT*100).toFixed(0);
+  const cnt=habitCount(),pct=(cnt/HTOT*100).toFixed(0);
   const ring=$('ring');
   if(ring){const off=283-(283*(cnt/HTOT));ring.style.strokeDashoffset=off;ring.style.stroke=cnt>=HTOT*.85?'var(--g)':cnt>=HTOT*.5?'var(--a)':'var(--o)';}
   txt('rn',cnt);txt('h-pct',pct+'%');txt('h-lbl',cnt+' de '+HTOT+' hábitos');txt('h-d',pct+'%');txt('dp-hpct',pct+'%');
   let ws=0,wd=0;
-  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);const hd=HL[k];if(hd){ws+=Object.values(hd).filter(Boolean).length;wd++;}}
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const k=td(d);if(HL[k]||habitCount(k)){ws+=habitCount(k);wd++;}}
   txt('h-w',wd?Math.round(ws/wd/HTOT*100)+'%':'—');
   let ms=0,md=0;
-  for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);const hd=HL[k];if(hd){ms+=Object.values(hd).filter(Boolean).length;md++;}}
+  for(let i=0;i<30;i++){const d=new Date();d.setDate(d.getDate()-i);const k=td(d);if(HL[k]||habitCount(k)){ms+=habitCount(k);md++;}}
   txt('h-m',md?Math.round(ms/md/HTOT*100)+'%':'—');
 }
 function togH(id){vib();if(!HL[td()])HL[td()]={};HL[td()][id]=!HL[td()][id];S.set('a90_h',HL);renderHabits();drawCharts();genAlerts();}
@@ -984,7 +1014,7 @@ function renderWeekTrainSummary(){
     const days=[];
     for(let i=6;i>=0;i--){
       const d=new Date();d.setDate(d.getDate()-i);
-      const k=d.toISOString().slice(0,10);
+      const k=td(d);
       const trained=Object.keys(WLOG).some(key=>(WLOG[key]||[]).some(l=>l.date===k));
       days.push({date:k,trained,isToday:i===0});
     }
@@ -1050,9 +1080,9 @@ const RPLAN=[
    sess:[{wk:'SEM 5',day:'TER',type:'ZONA 2',desc:'40min contínuos',detail:'FC 65-75% máx. Frases completas = certo.',id:'r13'},{wk:'SEM 5',day:'QUI',type:'FARTLEK',desc:'Fartlek 25min',detail:'5leve → 5mod → 5leve → 5mod → 5leve',id:'r14'},{wk:'SEM 5',day:'DOM',type:'LONGÃO',desc:'7km Zona 2',detail:'Pace consistente km1 ao km7.',id:'r15'},{wk:'SEM 6',day:'TER',type:'ZONA 2',desc:'40min',detail:'5-10s mais rápido que semana anterior.',id:'r16'},{wk:'SEM 6',day:'QUI',type:'PROGRESSIVO',desc:'35min',detail:'15leve → 15mod → 5leve',id:'r17'},{wk:'SEM 6',day:'DOM',type:'LONGÃO',desc:'8km — primeiro 8!',detail:'4+4: ida relaxado, volta mantendo.',id:'r18'},{wk:'SEM 7',day:'TER',type:'ZONA 2',desc:'45min — volume',detail:'Mais tempo, mesma intensidade.',id:'r19'},{wk:'SEM 7',day:'QUI',type:'PROGRESSIVO',desc:'35min',detail:'Cadência: 170-180 passos/min.',id:'r20'},{wk:'SEM 7',day:'DOM',type:'LONGÃO',desc:'8km — consolidação',detail:'Objetivo: mais confortável que sem 6.',id:'r21'},{wk:'SEM 8',day:'TER',type:'ZONA 2',desc:'45min',detail:'A base está sendo construída.',id:'r22'},{wk:'SEM 8',day:'QUI',type:'PROGRESSIVO',desc:'40min',detail:'15leve → 20mod → 5leve',id:'r23'},{wk:'SEM 8',day:'DOM',type:'LONGÃO',desc:'9km — quase 10!',detail:'A 1km do marco. Zona 2.',id:'r24'}]},
   {id:'f3',ph:'F3',title:'10KM',weeks:'Sem 9–12',level:'Intermediário',goal:'Alcançar e consolidar 10km. Introduzir tempo run para desenvolver o limiar aeróbico.',
    sess:[{wk:'SEM 9',day:'TER',type:'ZONA 2',desc:'45min',detail:'Respiração nasal o quanto conseguir.',id:'r25'},{wk:'SEM 9',day:'QUI',type:'TEMPO RUN',desc:'20min no limiar',detail:'5aq → 20min desconfortável mas sustentável → 5desaq',id:'r26'},{wk:'SEM 9',day:'DOM',type:'LONGÃO',desc:'9km',detail:'Próxima semana: 10km.',id:'r27'},{wk:'SEM 10',day:'TER',type:'ZONA 2',desc:'50min',detail:'Volume crescente. Paciência.',id:'r28'},{wk:'SEM 10',day:'QUI',type:'TEMPO RUN',desc:'22min no limiar',detail:'5aq → 22min → 5desaq',id:'r29'},{wk:'SEM 10',day:'DOM',type:'🎯 10KM',desc:'10KM — MARCO HISTÓRICO!',detail:'Primeiros 10km. Não acelere. Celebre muito.',id:'r30'},{wk:'SEM 11',day:'TER',type:'ZONA 2',desc:'50min',detail:'Consolidação sem pressão.',id:'r31'},{wk:'SEM 11',day:'QUI',type:'TEMPO RUN',desc:'25min no limiar',detail:'5aq → 25min → 5desaq',id:'r32'},{wk:'SEM 11',day:'DOM',type:'LONGÃO',desc:'10km',detail:'Pace mais consistente que sem 10.',id:'r33'},{wk:'SEM 12',day:'TER',type:'ZONA 2',desc:'45min — taper',detail:'Recuperação. Absorção.',id:'r34'},{wk:'SEM 12',day:'QUI',type:'TAPER',desc:'Tempo run 20min leve',detail:'Guardar para o longão.',id:'r35'},{wk:'SEM 12',day:'DOM',type:'LONGÃO',desc:'11km',detail:'Além dos 10km. Zona 2.',id:'r36'}]},
-  {id:'f4',ph:'F4',title:'EVOLUÇÃO',weeks:'Sem 13–18',level:'Intermediário-Avançado',goal:'Construir resistência para 15km. Longão semanal é o treino mais importante.',
+  {id:'f4',ph:'F4',title:'EVOLUÇÃO',weeks:'Sem 13–18',level:'Intermediário-Avançado',goal:'Construir resistência até 15km — o marco intermediário antes do ciclo de meia maratona.',
    sess:[{wk:'SEM 13',day:'TER',type:'ZONA 2',desc:'55min',detail:'Base aeróbica profunda.',id:'r37'},{wk:'SEM 13',day:'QUI',type:'RITMO',desc:'Treino de ritmo 30min',detail:'10aq → 30min mod-forte → 5desaq',id:'r38'},{wk:'SEM 13',day:'DOM',type:'LONGÃO',desc:'12km',detail:'3 blocos de 4km. Hidrate a cada 30min.',id:'r39'},{wk:'SEM 15',day:'TER',type:'ZONA 2',desc:'55min',detail:'Motor aeróbico crescendo.',id:'r40'},{wk:'SEM 15',day:'QUI',type:'RITMO',desc:'35min',detail:'10aq → 35min mod-forte → 5desaq',id:'r41'},{wk:'SEM 15',day:'DOM',type:'LONGÃO',desc:'13km',detail:'Gel de carboidrato no km 8.',id:'r42'},{wk:'SEM 17',day:'TER',type:'ZONA 2',desc:'60min — 1 hora!',detail:'1 hora de corrida contínua.',id:'r43'},{wk:'SEM 17',day:'QUI',type:'RITMO',desc:'40min',detail:'10aq → 40min mod-forte → 5desaq',id:'r44'},{wk:'SEM 17',day:'DOM',type:'LONGÃO',desc:'14km',detail:'A 1km da meta.',id:'r45'},{wk:'SEM 18',day:'TER',type:'TAPER',desc:'40min leve',detail:'Semana de redução.',id:'r46'},{wk:'SEM 18',day:'QUI',type:'TAPER',desc:'30min leve',detail:'Pernas descansadas.',id:'r47'},{wk:'SEM 18',day:'DOM',type:'🏁 15KM',desc:'15KM — META ATINGIDA!',detail:'Zona 2. 22 semanas de trabalho. Celebre.',id:'r48'}]},
-  {id:'f5',ph:'F5',title:'PERFORMANCE',weeks:'Sem 19–22',level:'Avançado',goal:'Melhorar velocidade. Você tem a base — agora seja mais rápido.',
+  {id:'f5',ph:'F5',title:'PERFORMANCE',weeks:'Sem 19–22',level:'Avançado',goal:'Consolidar os 15km com qualidade e criar base para o ciclo rumo aos 21km.',
    sess:[{wk:'SEM 19',day:'TER',type:'TIROS',desc:'4×400m forte',detail:'Aquec → 4×400m (8/10) → rec 90s cam → desaq',id:'r49'},{wk:'SEM 19',day:'QUI',type:'ZONA 2+',desc:'60min + strides',detail:'60min leve + 6×20s aceleração max',id:'r50'},{wk:'SEM 19',day:'DOM',type:'LONGÃO',desc:'15km mais rápido',detail:'Pace melhor que o primeiro 15km.',id:'r51'},{wk:'SEM 20',day:'TER',type:'TIROS',desc:'6×400m',detail:'Aquec → 6×400m → rec 90s → desaq',id:'r52'},{wk:'SEM 20',day:'QUI',type:'TEMPO RUN',desc:'35min no limiar',detail:'5aq → 35min → 5desaq',id:'r53'},{wk:'SEM 20',day:'DOM',type:'LONGÃO',desc:'15km negative split',detail:'Segunda metade mais rápida.',id:'r54'},{wk:'SEM 21',day:'TER',type:'TIROS',desc:'8×400m',detail:'Aquec → 8×400m → rec 90s → desaq',id:'r55'},{wk:'SEM 21',day:'QUI',type:'TEMPO RUN',desc:'40min no limiar',detail:'5aq → 40min → 5desaq',id:'r56'},{wk:'SEM 21',day:'DOM',type:'LONGÃO',desc:'15km race pace',detail:'Pace de competição km1 ao km15.',id:'r57'},{wk:'SEM 22',day:'TER',type:'TIROS',desc:'10×400m',detail:'Máximo: 10 tiros → rec 90s',id:'r58'},{wk:'SEM 22',day:'QUI',type:'TAPER',desc:'45min leve',detail:'Pernas frescas para o grande dia.',id:'r59'},{wk:'SEM 22',day:'DOM',type:'🏆 PR',desc:'15km — Personal Record',detail:'22 semanas. Você está pronto.',id:'r60'}]}
 ];
 function renderRunPlan(){
@@ -1228,8 +1258,8 @@ function renderTreino(){
             const editKey=item.extraIdx!==undefined?`extra-${ph.id}-${i}-${si}-${item.extraIdx}`:teKey(ph.id,i,si,item.origIdx);
             return`<li class="ex-li" style="position:relative">
               <span class="ex-n">${String(j+1).padStart(2,'0')}</span>
-              <div class="ex-nm">${e[0]}${editTag}<span class="ex-note">${e[2]||''}</span></div>
-              ${rpe}<span class="ex-s">${e[1]}</span>
+              <div class="ex-nm">${esc(e[0])}${editTag}<span class="ex-note">${esc(e[2])}</span></div>
+              ${rpe}<span class="ex-s">${esc(e[1])}</span>
               <button onclick="openLogModal('${editKey}',${JSON.stringify(e[0]).replace(/"/g,'&quot;')})" style="flex-shrink:0;color:var(--a);padding:2px 4px" aria-label="Registrar execução">📝</button>
               <button onclick="openExEditor('${editKey}',${JSON.stringify(e).replace(/"/g,'&quot;')})" style="flex-shrink:0;color:var(--t3);padding:2px 4px;margin-left:2px" aria-label="Editar exercício">✎</button>
             </li>`;
@@ -1356,7 +1386,7 @@ function saveLog(){
   const key=$('log-ed-key').value;
   const carga=parseFloat($('log-ed-carga').value);
   const reps=$('log-ed-reps').value.trim();
-  if(isNaN(carga)&&!reps)return;
+  if(isNaN(carga)&&!reps){showToast('Informe a carga ou as repetições realizadas.');return;}
   if(!WLOG[key])WLOG[key]=[];
   const existing=WLOG[key].findIndex(l=>l.date===td());
   const entry={date:td(),carga:isNaN(carga)?null:carga,reps};
@@ -1367,7 +1397,7 @@ function saveLog(){
   renderLogHistory(key);
   renderHabits(); // 'treino' automático depende deste dado — atualiza o anel na hora
   updDash();
-  renderWeekTrainSummary();
+  renderWeekTrainSummary();renderStreak();showToast('Execução registrada para hoje.');
 }
 function renderLogHistory(key){
   const el=$('log-history');if(!el)return;
@@ -1420,9 +1450,9 @@ function renderSupps(){
 const CF=[{id:'gc',l:'% Gordura',u:'%'},{id:'mm',l:'Massa magra',u:'kg'},{id:'ab',l:'Abdominal',u:'cm'},{id:'pe',l:'Peito',u:'cm'},{id:'br',l:'Braço',u:'cm'},{id:'co',l:'Coxa',u:'cm'}];
 function renderComp(){
   const el=$('comp-grid');if(!el)return;
-  el.innerHTML=CF.map(f=>`<div class="comp-c"><div class="comp-l">${f.l}</div><div style="display:flex;align-items:baseline;gap:4px"><input class="fi fi-sm" type="number" id="cf-${f.id}" placeholder="—" step="0.1" value="${CM[f.id]||''}"><span style="font-size:11px;color:var(--t3)">${f.u}</span></div></div>`).join('');
+  el.innerHTML=CF.map(f=>`<div class="comp-c"><div class="comp-l">${f.l}</div><div style="display:flex;align-items:baseline;gap:4px"><input class="fi fi-sm" type="number" id="cf-${f.id}" placeholder="—" step="0.1" value="${esc(CM[f.id]||'')}"><span style="font-size:11px;color:var(--t3)">${f.u}</span></div></div>`).join('');
 }
-function saveComp(){vib();CF.forEach(f=>{const v=$('cf-'+f.id);if(v&&v.value)CM[f.id]=parseFloat(v.value);});S.set('a90_c',CM);}
+function saveComp(){vib();CF.forEach(f=>{const v=$('cf-'+f.id);if(v&&v.value)CM[f.id]=parseFloat(v.value);});S.set('a90_c',CM);showToast('Medidas salvas.');}
 
 /* ═══ PROGRESS PHOTOS — comprimidas no client, guardadas em localStorage ═══ */
 let PH=S.get('a90_ph')||[]; // [{date, data(base64 jpeg comprimido)}]
@@ -1517,12 +1547,12 @@ let REM=S.get('a90_rem')||[]; // [{id,time:'HH:MM',msg,lastFired:'YYYY-MM-DD-HH:
 function addReminder(){
   vib();
   const time=$('rem-time').value,msg=$('rem-msg').value.trim();
-  if(!time||!msg)return;
+  if(!time||!msg){showToast('Informe o horário e a mensagem do lembrete.');return;}
   REM.push({id:Date.now(),time,msg,lastFired:null});
   REM.sort((a,b)=>a.time.localeCompare(b.time));
   S.set('a90_rem',REM);
   $('rem-msg').value='';
-  renderReminders();
+  renderReminders();showToast('Lembrete adicionado.');
 }
 function deleteReminder(id){
   vib();
@@ -1533,7 +1563,7 @@ function deleteReminder(id){
 function renderReminders(){
   const el=$('reminders-list');if(!el)return;
   if(!REM.length){el.innerHTML='<div class="empty">Nenhum lembrete configurado.</div>';return;}
-  el.innerHTML=REM.map(r=>`<div class="mr"><div class="mr-ic">⏰</div><div class="mr-nm">${r.msg}</div><div class="mr-vl" style="font-size:16px">${r.time}</div><button class="btn-o" onclick="deleteReminder(${r.id})">×</button></div>`).join('');
+  el.innerHTML=REM.map(r=>`<div class="mr"><div class="mr-ic">⏰</div><div class="mr-nm">${esc(r.msg)}</div><div class="mr-vl" style="font-size:16px">${esc(r.time)}</div><button class="btn-o" onclick="deleteReminder(${r.id})" aria-label="Remover lembrete">×</button></div>`).join('');
 }
 function checkReminders(){
   try{
@@ -1564,7 +1594,7 @@ function genAlerts(){
   const el=$('alerts');if(!el)return;
   const corridas=RL.filter(r=>r.type==='corrida'||!r.type);
   const mx=corridas.reduce((m,r)=>Math.max(m,r.km),0),tk=corridas.reduce((s,r)=>s+r.km,0);
-  const todH=Object.values(gH()).filter(Boolean).length;const als=[];
+  const todH=habitCount();const als=[];
   if(WL.length>=3){
     const l3=WL.slice(-3);
     if(l3[2].val>=l3[0].val){
@@ -1574,8 +1604,9 @@ function genAlerts(){
     }
   }
   if(corridas.length>=2&&corridas[corridas.length-1].km>corridas.slice(0,-1).reduce((m,r)=>Math.max(m,r.km),0))als.push({ic:'🏅',tx:`<strong>Novo recorde de corrida!</strong> ${corridas[corridas.length-1].km.toFixed(1)}km registrado.`});
-  if(mx>=15)als.push({ic:'🏆',tx:'<strong>15km atingidos!</strong> Você completou o objetivo. Próximo: meia-maratona.'});
-  else if(mx>=10)als.push({ic:'🎯',tx:'<strong>10km alcançados!</strong> Na reta final para os 15km.'});
+  if(mx>=HALF_MARATHON_KM)als.push({ic:'🏆',tx:'<strong>21km atingidos!</strong> Meia maratona concluída. Resultado de uma preparação consistente.'});
+  else if(mx>=15)als.push({ic:'🎯',tx:'<strong>15km atingidos!</strong> Marco intermediário concluído. Próximo: construir volume para os 21km.'});
+  else if(mx>=10)als.push({ic:'🏃',tx:'<strong>10km alcançados!</strong> Você está construindo a base para 15km e, depois, a meia maratona.'});
   if(todH<6)als.push({ic:'💡',tx:`<strong>${todH}/${HTOT} hábitos hoje.</strong> Com 3 refeições, água e whey são os mais fáceis de esquecer — priorize.`});
   if(!gH().whey)als.push({ic:'🥛',tx:'<strong>Whey não registrado hoje.</strong> Com só 3 refeições sólidas, ele é essencial para bater os 180g de proteína.',urg:true});
   if(!gH().omega3)als.push({ic:'🐟',tx:'<strong>Ômega-3 não registrado hoje.</strong> Essencial para reduzir o LDL 196.',urg:true});
@@ -1600,7 +1631,7 @@ function drawCharts(){
     const rL=corridas.map(r=>fmtD(r.date)),rD=corridas.map(r=>r.km);
     mkC('c-run',{type:'bar',data:{labels:rL.length?rL:['—'],datasets:[{data:rD.length?rD:[0],backgroundColor:'rgba(195,255,30,0.14)',borderColor:'rgba(195,255,30,0.55)',borderWidth:1.5,borderRadius:6}]},options:CB});
     const hL=[],hD=[];
-    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().slice(0,10);hL.push(fmtD(k));hD.push(Object.values(HL[k]||{}).filter(Boolean).length);}
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=td(d);hL.push(fmtD(k));hD.push(habitCount(k));}
     mkC('c-hab',{type:'bar',data:{labels:hL,datasets:[{data:hD,backgroundColor:'rgba(195,255,30,0.14)',borderColor:'rgba(195,255,30,0.55)',borderWidth:1.5,borderRadius:6}]},options:{...CB,scales:{...CB.scales,y:{...CB.scales.y,min:0,max:HTOT}}}});
   }catch(e){console.warn('drawCharts failed:',e);}
 }
@@ -1613,10 +1644,9 @@ function calcStreak(){
     let streak=0;
     for(let i=0;i<90;i++){
       const d=new Date();d.setDate(d.getDate()-i);
-      const k=d.toISOString().slice(0,10);
-      const hd=HL[k];
-      const cnt=hd?Object.values(hd).filter(Boolean).length:0;
-      if(i===0){ if(cnt>=8){streak++;continue;} else {continue;} }
+      const k=td(d);
+      const cnt=habitCount(k);
+      if(i===0){ if(cnt>=8){streak++;continue;} else {return 0;} }
       if(cnt>=8)streak++; else break;
     }
     return streak;
@@ -1625,7 +1655,7 @@ function calcStreak(){
 function renderStreak(){
   try{
     const s=calcStreak();
-    const todayCnt=Object.values(gH()).filter(Boolean).length;
+    const todayCnt=habitCount();
     [['streak-fire','streak-n','streak-sub'],['streak-fire-2','streak-n-2','streak-sub-2']].forEach(([fireId,nId,subId])=>{
       const fireEl=$(fireId),nEl=$(nId),subEl=$(subId);
       if(nEl)nEl.textContent=s;
@@ -1683,7 +1713,7 @@ function populateStoryData(){
     const kmEl=$('story-km');if(kmEl)kmEl.innerHTML=`${tkm.toFixed(1)}<span>km</span>`;
     const streak=calcStreak();
     const streakEl=$('story-streak');if(streakEl)streakEl.innerHTML=`${streak}<span>dias</span>`;
-    const habCnt=Object.values(gH()).filter(Boolean).length;
+    const habCnt=habitCount();
     const habEl=$('story-hab');if(habEl)habEl.innerHTML=`${habCnt}<span>/${HTOT}</span>`;
   }catch(e){console.warn('populateStoryData failed:',e);}
 }
@@ -1729,11 +1759,17 @@ function downloadStory(){
 const _origTogH=togH;
 togH=function(id){_origTogH(id);renderStreak();};
 
+function closeOpenModal(){['ex-editor-modal','log-modal','story-modal'].forEach(id=>{const modal=$(id);if(modal&&modal.style.display!=='none')modal.style.display='none';});}
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeOpenModal();});
+['ex-editor-modal','log-modal','story-modal'].forEach(id=>{const modal=$(id);if(modal)modal.addEventListener('click',event=>{if(event.target===modal)closeOpenModal();});});
+
 /* ═══ INIT (v7 final) ═══ */
 (function(){
   const t=td();['w-date','r-date'].forEach(id=>{const e=$(id);if(e)e.value=t;});
   renderWList();updDash();renderRun();renderRunPlan();renderTreino();renderCardio();renderMob();renderHabits();renderSupps();renderComp();renderWGrid();genAlerts();
   renderStreak();renderGreeting();renderPhotos();renderReminders();renderMeals();renderWeekTrainSummary();
+  const savedPage=S.get('a90_page');if(PAGES.includes(savedPage)&&savedPage!=='dash')go(savedPage);
+  checkReminders();
   setInterval(checkReminders,20000);
   setTimeout(drawCharts,120);
 })();
