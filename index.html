@@ -509,6 +509,30 @@ input,select{font-family:var(--fb)}
     </div>
   </div>
 
+  <div class="card ca a3" id="hybrid-focus-card">
+    <div class="tb tba"></div>
+    <div class="lbl" style="margin-bottom:10px">Fluxo híbrido do dia</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div>
+        <div class="nsm" id="hybrid-verb" style="color:var(--a)">Treino principal</div>
+        <div class="note" id="hybrid-summary">O algoritmo vai ajustar o foco com base no registro do dia.</div>
+      </div>
+      <div class="chip cha" id="hybrid-tag">Força</div>
+    </div>
+    <div class="g2 mt12">
+      <div class="card csm" style="padding:12px 11px;border-radius:11px">
+        <div class="lbl">Treino</div>
+        <div class="nsm mt6" id="hybrid-train" style="color:var(--a)">Força</div>
+        <div class="note" id="hybrid-train-note">Base da sessão</div>
+      </div>
+      <div class="card csm" style="padding:12px 11px;border-radius:11px">
+        <div class="lbl">Recuperação</div>
+        <div class="nsm mt6" id="hybrid-recovery" style="color:var(--g)">Boa</div>
+        <div class="note" id="hybrid-rec-note">Sono e energia</div>
+      </div>
+    </div>
+  </div>
+
   <div class="card ca a2"><div class="tb tba"></div>
     <div class="lbl" style="margin-bottom:11px">Progresso de emagrecimento</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px">
@@ -1898,6 +1922,65 @@ function renderGreeting(){
   }catch(e){console.warn('renderGreeting failed:',e);}
 }
 
+function getHybridFocus(){
+  const today=new Date();
+  const dow=today.getDay();
+  const dayMap=[
+    {tag:'Recuperação',train:'Caminhada leve',trainNote:'Mobilidade + rodagem suave',recovery:'Boa',recNote:'Emagrecimento sem fadiga acumulada'},
+    {tag:'Força',train:'Peito / Ombro',trainNote:'Puxada e empurrar max',recovery:'Alta',recNote:'Sinal bom para carga'},
+    {tag:'Força',train:'Pernas',trainNote:'Agachamento e glúteo',recovery:'Boa',recNote:'Foco total em potência'},
+    {tag:'Força',train:'Costas / bíceps',trainNote:'Puxada + remo + bíceps',recovery:'Média',recNote:'Cuidado com volume total'},
+    {tag:'Cardio',train:'Cardio + corrida',trainNote:'Zona 2 ou progressivo',recovery:'Média',recNote:'Menos carga, mais qualidade'},
+    {tag:'Força/Volume',train:'Upper + pump',trainNote:'Volume com técnica',recovery:'Boa',recNote:'Foco em recuperação ativa'},
+    {tag:'Cardio',train:'Longão / ciclismo',trainNote:'Z2 e base aeróbica',recovery:'Boa',recNote:'Ótimo para basal e condicionamento'}
+  ];
+  const plan=dayMap[dow];
+  const sleepEntry=WL.find(w=>w.date===td());
+  const todayHabits=Object.values(gH()).filter(Boolean).length;
+  const recoveryScore=(sleepEntry&&sleepEntry.sono?sleepEntry.sono:7) + (todayHabits>=8 ? 1.5 : todayHabits>=5 ? 0.5 : -1);
+  let recoveryState='Boa';
+  let recoveryNote='Sono e energia estáveis';
+  if(recoveryScore < 6.5){recoveryState='Baixa'; recoveryNote='Acelere recuperação antes do próximo esforço';}
+  else if(recoveryScore < 7.5){recoveryState='Média'; recoveryNote='Ritmo controlado, sem forçar';}
+  if(plan.tag==='Cardio' && recoveryState==='Baixa'){recoveryState='Média'; recoveryNote='Qualidade maior que volume';}
+
+  return {
+    tag: plan.tag,
+    verb: plan.tag === 'Cardio' ? 'Cardio principal' : plan.tag === 'Força' ? 'Treino principal' : 'Fluxo híbrido',
+    summary: plan.tag === 'Cardio'
+      ? 'A sessão prioriza corrida/ciclismo com cadência e fluxo aeróbio; se a recuperação estiver baixa, reduza a intensidade.'
+      : 'A sessão prioriza força e densidade, com o cardio mantendo o sistema aeróbico e o déficit sem perder performance.',
+    train: plan.train,
+    trainNote: plan.trainNote,
+    recovery: recoveryState,
+    recNote: recoveryNote
+  };
+}
+
+function renderHybridFocus(){
+  const info=getHybridFocus();
+  const tagEl=$('hybrid-tag');
+  if(tagEl){
+    tagEl.textContent=info.tag;
+    tagEl.className='chip '+(info.tag==='Cardio'?'chb':info.tag==='Força'?'cha':info.tag==='Força/Volume'?'cho':'chx');
+  }
+  const verbEl=$('hybrid-verb');
+  if(verbEl) verbEl.textContent=info.verb;
+  const summaryEl=$('hybrid-summary');
+  if(summaryEl) summaryEl.textContent=info.summary;
+  const trainEl=$('hybrid-train');
+  if(trainEl) trainEl.textContent=info.train;
+  const trainNoteEl=$('hybrid-train-note');
+  if(trainNoteEl) trainNoteEl.textContent=info.trainNote;
+  const recoveryEl=$('hybrid-recovery');
+  if(recoveryEl){
+    recoveryEl.textContent=info.recovery;
+    recoveryEl.style.color = info.recovery === 'Baixa' ? 'var(--o)' : info.recovery === 'Média' ? 'var(--a)' : 'var(--g)';
+  }
+  const recNoteEl=$('hybrid-rec-note');
+  if(recNoteEl) recNoteEl.textContent=info.recNote;
+}
+
 /* ═══ v4: STORY EXPORT ═══ */
 let storyCanvasCache=null;
 function openStoryModal(){
@@ -2098,7 +2181,7 @@ function triggerInstall(){
 (function(){
   const t=td();['w-date','r-date'].forEach(id=>{const e=$(id);if(e)e.value=t;});
   renderWList();updDash();renderRun();renderRunPlan();renderTreino();renderCardio();renderMob();renderHabits();renderSupps();renderComp();renderWGrid();genAlerts();
-  renderStreak();renderGreeting();renderPhotos();renderReminders();renderMeals();renderWeekTrainSummary();renderCheckinToday();renderReturnCard();
+  renderStreak();renderGreeting();renderHybridFocus();renderPhotos();renderReminders();renderMeals();renderWeekTrainSummary();renderCheckinToday();renderReturnCard();
   setupPWA();setupInstallPrompt();
   setInterval(checkReminders,20000);
   setTimeout(drawCharts,120);
